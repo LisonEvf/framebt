@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# venv
+.venv/
+venv/
+env/
+
+# framebt runtime
+/data/
+*.duckdb
+results/
+*.csv
+
+# framebt tool caches / logs（生成物，不入库）
+tools/etf_cache/
+tools/*.log

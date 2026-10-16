@@ -1,0 +1,39 @@
+[project]
+name = "framebt"
+version = "1.0.0"
+description = "帧刷新量化回测框架 · Frame-refresh causal backtesting engine (A-share)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+keywords = ["quant", "backtest", "causal", "frame-refresh", "A-share", "trading"]
+authors = [{ name = "LisonEvf", email = "lisonevf@gmail.com" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+# 核心运行时零第三方依赖（纯标准库），保证 I3 逐位复现与可移植性。
+dependencies = []
+
+[project.optional-dependencies]
+# 数据源（读取 opentdx 数仓的 Parquet）与绩效分析可选依赖。
+data = ["pandas", "pyarrow"]
+dev = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/LisonEvf/framebt.git"
+Issues = "https://github.com/LisonEvf/framebt/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,0 +1,3602 @@
+[
+ {
+  "market": "SH",
+  "code": "511880",
+  "name": "银华日利ETF",
+  "amount": 586355264.0
+ },
+ {
+  "market": "SH",
+  "code": "511360",
+  "name": "短融ETF海富通",
+  "amount": 415368192.0
+ },
+ {
+  "market": "SH",
+  "code": "511990",
+  "name": "华宝添益ETF",
+  "amount": 389749472.0
+ },
+ {
+  "market": "SZ",
+  "code": "159915",
+  "name": "创业板ETF易方达",
+  "amount": 161581792.0
+ },
+ {
+  "market": "SH",
+  "code": "588000",
+  "name": "科创50ETF华夏",
+  "amount": 98939712.0
+ },
+ {
+  "market": "SH",
+  "code": "513310",
+  "name": "中韩半导体ETF华泰柏瑞",
+  "amount": 96279936.0
+ },
+ {
+  "market": "SH",
+  "code": "588170",
+  "name": "科创半导体ETF华夏",
+  "amount": 95010016.0
+ },
+ {
+  "market": "SH",
+  "code": "513120",
+  "name": "港股创新药ETF广发",
+  "amount": 60080976.0
+ },
+ {
+  "market": "SH",
+  "code": "515880",
+  "name": "通信ETF国泰",
+  "amount": 48178712.0
+ },
+ {
+  "market": "SZ",
+  "code": "159516",
+  "name": "半导体设备ETF国泰",
+  "amount": 41187220.0
+ },
+ {
+  "market": "SH",
+  "code": "510300",
+  "name": "沪深300ETF华泰柏瑞",
+  "amount": 39546032.0
+ },
+ {
+  "market": "SH",
+  "code": "513130",
+  "name": "恒生科技ETF华泰柏瑞",
+  "amount": 39390524.0
+ },
+ {
+  "market": "SZ",
+  "code": "159001",
+  "name": "货币ETF易方达",
+  "amount": 37140800.0
+ },
+ {
+  "market": "SH",
+  "code": "513330",
+  "name": "恒生互联网ETF华夏",
+  "amount": 36388980.0
+ },
+ {
+  "market": "SH",
+  "code": "588200",
+  "name": "科创芯片ETF嘉实",
+  "amount": 24794840.0
+ },
+ {
+  "market": "SH",
+  "code": "513090",
+  "name": "香港证券ETF易方达",
+  "amount": 24419642.0
+ },
+ {
+  "market": "SH",
+  "code": "513180",
+  "name": "恒生科技ETF华夏",
+  "amount": 20866680.0
+ },
+ {
+  "market": "SH",
+  "code": "513050",
+  "name": "中概互联网ETF易方达",
+  "amount": 20615112.0
+ },
+ {
+  "market": "SZ",
+  "code": "159131",
+  "name": "港股通信息技术ETF华宝",
+  "amount": 18212160.0
+ },
+ {
+  "market": "SZ",
+  "code": "159949",
+  "name": "创业板50ETF华安",
+  "amount": 17460882.0
+ },
+ {
+  "market": "SH",
+  "code": "510500",
+  "name": "中证500ETF南方",
+  "amount": 17372688.0
+ },
+ {
+  "market": "SH",
+  "code": "512100",
+  "name": "中证1000ETF南方",
+  "amount": 17334956.0
+ },
+ {
+  "market": "SZ",
+  "code": "159792",
+  "name": "港股通互联网ETF富国",
+  "amount": 16433596.0
+ },
+ {
+  "market": "SH",
+  "code": "588080",
+  "name": "科创50ETF易方达",
+  "amount": 15904236.0
+ },
+ {
+  "market": "SH",
+  "code": "510310",
+  "name": "沪深300ETF易方达",
+  "amount": 15767673.0
+ },
+ {
+  "market": "SH",
+  "code": "511380",
+  "name": "可转债ETF博时",
+  "amount": 15734554.0
+ },
+ {
+  "market": "SZ",
+  "code": "159558",
+  "name": "半导体设备ETF易方达",
+  "amount": 15007082.0
+ },
+ {
+  "market": "SH",
+  "code": "510210",
+  "name": "上证指数ETF富国",
+  "amount": 14602890.0
+ },
+ {
+  "market": "SH",
+  "code": "588710",
+  "name": "科创半导体设备ETF华泰柏瑞",
+  "amount": 13671064.0
+ },
+ {
+  "market": "SH",
+  "code": "512480",
+  "name": "半导体ETF国联安",
+  "amount": 12899280.0
+ },
+ {
+  "market": "SH",
+  "code": "512880",
+  "name": "证券ETF国泰",
+  "amount": 12852602.0
+ },
+ {
+  "market": "SZ",
+  "code": "159740",
+  "name": "恒生科技ETF大成",
+  "amount": 11902237.0
+ },
+ {
+  "market": "SH",
+  "code": "510050",
+  "name": "上证50ETF华夏",
+  "amount": 11544809.0
+ },
+ {
+  "market": "SZ",
+  "code": "159952",
+  "name": "创业板ETF广发",
+  "amount": 11536066.0
+ },
+ {
+  "market": "SH",
+  "code": "513500",
+  "name": "标普500ETF博时",
+  "amount": 10781910.0
+ },
+ {
+  "market": "SH",
+  "code": "513400",
+  "name": "道琼斯ETF鹏华",
+  "amount": 10780502.0
+ },
+ {
+  "market": "SH",
+  "code": "518880",
+  "name": "黄金ETF华安",
+  "amount": 10509082.0
+ },
+ {
+  "market": "SH",
+  "code": "589020",
+  "name": "科创半导体设备ETF鹏华",
+  "amount": 9750496.0
+ },
+ {
+  "market": "SH",
+  "code": "512170",
+  "name": "医疗ETF华宝",
+  "amount": 9647243.0
+ },
+ {
+  "market": "SH",
+  "code": "513290",
+  "name": "纳指生物科技ETF汇添富",
+  "amount": 8771488.0
+ },
+ {
+  "market": "SH",
+  "code": "511090",
+  "name": "30年国债ETF鹏扬",
+  "amount": 8493365.0
+ },
+ {
+  "market": "SH",
+  "code": "515050",
+  "name": "通信ETF华夏",
+  "amount": 8118314.0
+ },
+ {
+  "market": "SH",
+  "code": "513520",
+  "name": "日经ETF华夏",
+  "amount": 6898984.0
+ },
+ {
+  "market": "SH",
+  "code": "511580",
+  "name": "国债政金债ETF招商",
+  "amount": 6831924.0
+ },
+ {
+  "market": "SZ",
+  "code": "159570",
+  "name": "港股通创新药ETF汇添富",
+  "amount": 6828902.0
+ },
+ {
+  "market": "SH",
+  "code": "563300",
+  "name": "中证2000ETF华泰柏瑞",
+  "amount": 6819751.0
+ },
+ {
+  "market": "SH",
+  "code": "513010",
+  "name": "恒生科技ETF易方达",
+  "amount": 6630954.0
+ },
+ {
+  "market": "SZ",
+  "code": "159781",
+  "name": "科创创业ETF易方达",
+  "amount": 6432053.5
+ },
+ {
+  "market": "SH",
+  "code": "515180",
+  "name": "XD红利ETF易方达",
+  "amount": 6379645.0
+ },
+ {
+  "market": "SZ",
+  "code": "159967",
+  "name": "创业板成长ETF华夏",
+  "amount": 6333930.5
+ },
+ {
+  "market": "SH",
+  "code": "588060",
+  "name": "科创50ETF广发",
+  "amount": 5873985.0
+ },
+ {
+  "market": "SZ",
+  "code": "159567",
+  "name": "港股创新药ETF银华",
+  "amount": 5859765.0
+ },
+ {
+  "market": "SZ",
+  "code": "159866",
+  "name": "日经ETF工银",
+  "amount": 5793766.5
+ },
+ {
+  "market": "SH",
+  "code": "560780",
+  "name": "半导体设备ETF广发",
+  "amount": 5732120.0
+ },
+ {
+  "market": "SH",
+  "code": "513770",
+  "name": "港股互联网ETF华宝",
+  "amount": 5528589.0
+ },
+ {
+  "market": "SZ",
+  "code": "159995",
+  "name": "芯片ETF华夏",
+  "amount": 5339932.0
+ },
+ {
+  "market": "SH",
+  "code": "513350",
+  "name": "标普油气ETF富国",
+  "amount": 5278247.0
+ },
+ {
+  "market": "SH",
+  "code": "517520",
+  "name": "黄金股ETF永赢",
+  "amount": 4835054.0
+ },
+ {
+  "market": "SH",
+  "code": "520500",
+  "name": "恒生创新药ETF华泰柏瑞",
+  "amount": 4793750.0
+ },
+ {
+  "market": "SH",
+  "code": "520880",
+  "name": "港股通创新药ETF华宝",
+  "amount": 4535237.0
+ },
+ {
+  "market": "SZ",
+  "code": "159892",
+  "name": "恒生医药ETF华夏",
+  "amount": 4487719.5
+ },
+ {
+  "market": "SZ",
+  "code": "159206",
+  "name": "卫星ETF永赢",
+  "amount": 4464412.5
+ },
+ {
+  "market": "SZ",
+  "code": "159529",
+  "name": "标普消费ETF景顺",
+  "amount": 4366697.5
+ },
+ {
+  "market": "SH",
+  "code": "513530",
+  "name": "港股通红利ETF华泰柏瑞",
+  "amount": 4345398.0
+ },
+ {
+  "market": "SH",
+  "code": "513060",
+  "name": "恒生医疗ETF博时",
+  "amount": 4275332.0
+ },
+ {
+  "market": "SH",
+  "code": "513650",
+  "name": "标普500ETF南方",
+  "amount": 4183542.0
+ },
+ {
+  "market": "SZ",
+  "code": "159502",
+  "name": "标普生物科技ETF嘉实",
+  "amount": 4063881.75
+ },
+ {
+  "market": "SH",
+  "code": "512800",
+  "name": "银行ETF华宝",
+  "amount": 4016200.0
+ },
+ {
+  "market": "SH",
+  "code": "511260",
+  "name": "十年国债ETF国泰",
+  "amount": 3879379.0
+ },
+ {
+  "market": "SH",
+  "code": "512980",
+  "name": "传媒ETF广发",
+  "amount": 3845170.0
+ },
+ {
+  "market": "SZ",
+  "code": "159316",
+  "name": "港股通创新药ETF易方达",
+  "amount": 3666889.75
+ },
+ {
+  "market": "SH",
+  "code": "562500",
+  "name": "机器人ETF华夏",
+  "amount": 3559951.0
+ },
+ {
+  "market": "SH",
+  "code": "551800",
+  "name": "科创债ETF国泰",
+  "amount": 3558240.0
+ },
+ {
+  "market": "SZ",
+  "code": "159531",
+  "name": "中证2000ETF南方",
+  "amount": 3488486.5
+ },
+ {
+  "market": "SH",
+  "code": "511180",
+  "name": "可转债ETF海富通",
+  "amount": 3480078.0
+ },
+ {
+  "market": "SZ",
+  "code": "159583",
+  "name": "通信ETF富国",
+  "amount": 3450259.0
+ },
+ {
+  "market": "SH",
+  "code": "511220",
+  "name": "城投债ETF海富通",
+  "amount": 3430286.0
+ },
+ {
+  "market": "SH",
+  "code": "589720",
+  "name": "科创创新药ETF国泰",
+  "amount": 3258869.0
+ },
+ {
+  "market": "SH",
+  "code": "515220",
+  "name": "煤炭ETF国泰",
+  "amount": 3252375.0
+ },
+ {
+  "market": "SZ",
+  "code": "159992",
+  "name": "创新药ETF银华",
+  "amount": 3221365.75
+ },
+ {
+  "market": "SZ",
+  "code": "159869",
+  "name": "游戏ETF华夏",
+  "amount": 3195007.0
+ },
+ {
+  "market": "SZ",
+  "code": "159326",
+  "name": "电网设备ETF华夏",
+  "amount": 3177399.75
+ },
+ {
+  "market": "SH",
+  "code": "589850",
+  "name": "科创50ETF东财",
+  "amount": 3142620.0
+ },
+ {
+  "market": "SZ",
+  "code": "159259",
+  "name": "成长ETF易方达",
+  "amount": 3054776.25
+ },
+ {
+  "market": "SH",
+  "code": "562590",
+  "name": "半导体设备ETF华夏",
+  "amount": 3037522.0
+ },
+ {
+  "market": "SH",
+  "code": "512690",
+  "name": "酒ETF鹏华",
+  "amount": 3013398.0
+ },
+ {
+  "market": "SH",
+  "code": "511130",
+  "name": "30年国债ETF博时",
+  "amount": 2987640.0
+ },
+ {
+  "market": "SH",
+  "code": "512000",
+  "name": "券商ETF华宝",
+  "amount": 2799005.0
+ },
+ {
+  "market": "SZ",
+  "code": "159205",
+  "name": "创业板ETF东财",
+  "amount": 2754007.0
+ },
+ {
+  "market": "SZ",
+  "code": "159977",
+  "name": "创业板ETF天弘",
+  "amount": 2699545.0
+ },
+ {
+  "market": "SH",
+  "code": "512710",
+  "name": "军工龙头ETF富国",
+  "amount": 2590346.0
+ },
+ {
+  "market": "SH",
+  "code": "588940",
+  "name": "科创50ETF富国",
+  "amount": 2573857.0
+ },
+ {
+  "market": "SZ",
+  "code": "159852",
+  "name": "软件ETF嘉实",
+  "amount": 2525471.75
+ },
+ {
+  "market": "SZ",
+  "code": "159993",
+  "name": "证券ETF鹏华",
+  "amount": 2520792.75
+ },
+ {
+  "market": "SH",
+  "code": "510980",
+  "name": "上证指数ETF汇添富",
+  "amount": 2504065.0
+ },
+ {
+  "market": "SH",
+  "code": "513780",
+  "name": "港股创新药ETF景顺",
+  "amount": 2497961.0
+ },
+ {
+  "market": "SZ",
+  "code": "159819",
+  "name": "人工智能ETF易方达",
+  "amount": 2476063.25
+ },
+ {
+  "market": "SZ",
+  "code": "159530",
+  "name": "机器人ETF易方达",
+  "amount": 2428304.5
+ },
+ {
+  "market": "SH",
+  "code": "511660",
+  "name": "货币ETF建信",
+  "amount": 2371337.0
+ },
+ {
+  "market": "SZ",
+  "code": "159338",
+  "name": "中证A500ETF国泰",
+  "amount": 2359959.0
+ },
+ {
+  "market": "SH",
+  "code": "512010",
+  "name": "医药ETF易方达",
+  "amount": 2352643.0
+ },
+ {
+  "market": "SH",
+  "code": "511200",
+  "name": "信用债ETF华夏",
+  "amount": 2212772.0
+ },
+ {
+  "market": "SZ",
+  "code": "159845",
+  "name": "中证1000ETF华夏",
+  "amount": 2183799.25
+ },
+ {
+  "market": "SH",
+  "code": "520700",
+  "name": "港股通创新药ETF万家",
+  "amount": 2168413.0
+ },
+ {
+  "market": "SH",
+  "code": "513260",
+  "name": "恒生科技ETF汇添富",
+  "amount": 2167912.0
+ },
+ {
+  "market": "SH",
+  "code": "561980",
+  "name": "半导体设备ETF招商",
+  "amount": 2153131.0
+ },
+ {
+  "market": "SH",
+  "code": "510880",
+  "name": "红利ETF华泰柏瑞",
+  "amount": 2078753.0
+ },
+ {
+  "market": "SH",
+  "code": "510760",
+  "name": "上证指数ETF国泰",
+  "amount": 2063232.0
+ },
+ {
+  "market": "SH",
+  "code": "513000",
+  "name": "日经225ETF易方达",
+  "amount": 2056842.0
+ },
+ {
+  "market": "SZ",
+  "code": "158052",
+  "name": "创业板金融科技ETF景顺",
+  "amount": 2052157.125
+ },
+ {
+  "market": "SH",
+  "code": "513850",
+  "name": "美国50ETF易方达",
+  "amount": 2023460.0
+ },
+ {
+  "market": "SH",
+  "code": "512890",
+  "name": "红利低波ETF华泰柏瑞",
+  "amount": 2017401.0
+ },
+ {
+  "market": "SH",
+  "code": "513880",
+  "name": "日经225ETF华安",
+  "amount": 1987529.0
+ },
+ {
+  "market": "SZ",
+  "code": "159919",
+  "name": "沪深300ETF嘉实",
+  "amount": 1975798.875
+ },
+ {
+  "market": "SZ",
+  "code": "158055",
+  "name": "创业板算力ETF国泰",
+  "amount": 1973985.625
+ },
+ {
+  "market": "SH",
+  "code": "512400",
+  "name": "有色金属ETF南方",
+  "amount": 1913362.0
+ },
+ {
+  "market": "SH",
+  "code": "588220",
+  "name": "科创100ETF鹏华",
+  "amount": 1913130.0
+ },
+ {
+  "market": "SH",
+  "code": "512760",
+  "name": "芯片ETF国泰",
+  "amount": 1854724.0
+ },
+ {
+  "market": "SZ",
+  "code": "159971",
+  "name": "创业板ETF富国",
+  "amount": 1828734.25
+ },
+ {
+  "market": "SH",
+  "code": "520870",
+  "name": "巴西ETF易方达",
+  "amount": 1803530.0
+ },
+ {
+  "market": "SZ",
+  "code": "159513",
+  "name": "纳斯达克100ETF大成",
+  "amount": 1793696.375
+ },
+ {
+  "market": "SH",
+  "code": "520920",
+  "name": "恒生科技ETF天弘",
+  "amount": 1792974.0
+ },
+ {
+  "market": "SH",
+  "code": "511850",
+  "name": "招商财富宝ETF",
+  "amount": 1780142.0
+ },
+ {
+  "market": "SH",
+  "code": "588020",
+  "name": "科创成长ETF易方达",
+  "amount": 1761153.0
+ },
+ {
+  "market": "SZ",
+  "code": "159003",
+  "name": "招商快线ETF",
+  "amount": 1740000.0
+ },
+ {
+  "market": "SZ",
+  "code": "159851",
+  "name": "金融科技ETF华宝",
+  "amount": 1736815.25
+ },
+ {
+  "market": "SZ",
+  "code": "159577",
+  "name": "美国50ETF汇添富",
+  "amount": 1681263.0
+ },
+ {
+  "market": "SZ",
+  "code": "159363",
+  "name": "创业板人工智能ETF华宝",
+  "amount": 1657425.0
+ },
+ {
+  "market": "SZ",
+  "code": "159957",
+  "name": "创业板ETF华夏",
+  "amount": 1653168.0
+ },
+ {
+  "market": "SH",
+  "code": "511520",
+  "name": "政金债ETF富国",
+  "amount": 1645374.0
+ },
+ {
+  "market": "SH",
+  "code": "563020",
+  "name": "红利低波ETF易方达",
+  "amount": 1633924.0
+ },
+ {
+  "market": "SH",
+  "code": "513380",
+  "name": "恒生科技ETF广发",
+  "amount": 1609189.0
+ },
+ {
+  "market": "SH",
+  "code": "515120",
+  "name": "创新药ETF广发",
+  "amount": 1604786.0
+ },
+ {
+  "market": "SZ",
+  "code": "159320",
+  "name": "电网设备ETF广发",
+  "amount": 1599010.0
+ },
+ {
+  "market": "SH",
+  "code": "511270",
+  "name": "10年地方债ETF海富通",
+  "amount": 1583842.0
+ },
+ {
+  "market": "SZ",
+  "code": "159506",
+  "name": "港股通创新药医疗ETF富国",
+  "amount": 1558939.75
+ },
+ {
+  "market": "SZ",
+  "code": "159981",
+  "name": "能源化工ETF建信",
+  "amount": 1556844.75
+ },
+ {
+  "market": "SZ",
+  "code": "159920",
+  "name": "恒生ETF华夏",
+  "amount": 1547550.0
+ },
+ {
+  "market": "SZ",
+  "code": "159217",
+  "name": "港股通创新药ETF工银",
+  "amount": 1515040.25
+ },
+ {
+  "market": "SZ",
+  "code": "159636",
+  "name": "港股通科技30ETF工银",
+  "amount": 1513055.375
+ },
+ {
+  "market": "SZ",
+  "code": "159928",
+  "name": "消费ETF汇添富",
+  "amount": 1501245.0
+ },
+ {
+  "market": "SZ",
+  "code": "159605",
+  "name": "中概互联ETF广发",
+  "amount": 1499844.125
+ },
+ {
+  "market": "SZ",
+  "code": "159381",
+  "name": "创业板人工智能ETF华夏",
+  "amount": 1461199.5
+ },
+ {
+  "market": "SH",
+  "code": "513360",
+  "name": "教育ETF博时",
+  "amount": 1446768.0
+ },
+ {
+  "market": "SH",
+  "code": "512050",
+  "name": "A500ETF华夏",
+  "amount": 1446706.0
+ },
+ {
+  "market": "SH",
+  "code": "513040",
+  "name": "港股通互联网ETF易方达",
+  "amount": 1442820.0
+ },
+ {
+  "market": "SH",
+  "code": "513080",
+  "name": "法国ETF华安",
+  "amount": 1419893.0
+ },
+ {
+  "market": "SZ",
+  "code": "159552",
+  "name": "中证2000增强ETF招商",
+  "amount": 1417024.75
+ },
+ {
+  "market": "SH",
+  "code": "588870",
+  "name": "科创50ETF汇添富",
+  "amount": 1415928.0
+ },
+ {
+  "market": "SH",
+  "code": "518850",
+  "name": "黄金ETF华夏",
+  "amount": 1364251.0
+ },
+ {
+  "market": "SZ",
+  "code": "159985",
+  "name": "豆粕ETF华夏",
+  "amount": 1356243.0
+ },
+ {
+  "market": "SZ",
+  "code": "159327",
+  "name": "半导体设备ETF万家",
+  "amount": 1342109.375
+ },
+ {
+  "market": "SZ",
+  "code": "159196",
+  "name": "港股通信息技术ETF易方达",
+  "amount": 1301234.0
+ },
+ {
+  "market": "SH",
+  "code": "510360",
+  "name": "沪深300ETF广发",
+  "amount": 1299725.0
+ },
+ {
+  "market": "SZ",
+  "code": "159783",
+  "name": "科创创业50ETF华夏",
+  "amount": 1288232.0
+ },
+ {
+  "market": "SZ",
+  "code": "159518",
+  "name": "标普油气ETF嘉实",
+  "amount": 1270675.0
+ },
+ {
+  "market": "SZ",
+  "code": "159682",
+  "name": "创业板50ETF景顺",
+  "amount": 1255527.0
+ },
+ {
+  "market": "SH",
+  "code": "588050",
+  "name": "科创50ETF工银",
+  "amount": 1250044.0
+ },
+ {
+  "market": "SZ",
+  "code": "159801",
+  "name": "芯片ETF广发",
+  "amount": 1207142.625
+ },
+ {
+  "market": "SZ",
+  "code": "159561",
+  "name": "德国ETF嘉实",
+  "amount": 1203627.625
+ },
+ {
+  "market": "SH",
+  "code": "510330",
+  "name": "沪深300ETF华夏",
+  "amount": 1183968.0
+ },
+ {
+  "market": "SZ",
+  "code": "159667",
+  "name": "工业母机ETF国泰",
+  "amount": 1182039.25
+ },
+ {
+  "market": "SZ",
+  "code": "159813",
+  "name": "半导体ETF鹏华",
+  "amount": 1155515.375
+ },
+ {
+  "market": "SZ",
+  "code": "159600",
+  "name": "科创债ETF嘉实",
+  "amount": 1134253.5
+ },
+ {
+  "market": "SH",
+  "code": "515080",
+  "name": "中证红利ETF招商",
+  "amount": 1132138.0
+ },
+ {
+  "market": "SZ",
+  "code": "159687",
+  "name": "亚太精选ETF南方",
+  "amount": 1125432.0
+ },
+ {
+  "market": "SZ",
+  "code": "159247",
+  "name": "创业板ETF汇添富",
+  "amount": 1118897.125
+ },
+ {
+  "market": "SZ",
+  "code": "159611",
+  "name": "电力ETF广发",
+  "amount": 1112943.625
+ },
+ {
+  "market": "SZ",
+  "code": "159628",
+  "name": "国证2000ETF万家",
+  "amount": 1112925.0
+ },
+ {
+  "market": "SH",
+  "code": "526000",
+  "name": "港股通信息技术ETF华夏",
+  "amount": 1087109.0
+ },
+ {
+  "market": "SH",
+  "code": "588090",
+  "name": "科创50ETF华泰柏瑞",
+  "amount": 1080478.0
+ },
+ {
+  "market": "SH",
+  "code": "513630",
+  "name": "港股低波红利ETF摩根",
+  "amount": 1078614.0
+ },
+ {
+  "market": "SZ",
+  "code": "159837",
+  "name": "生物科技ETF易方达",
+  "amount": 1065642.875
+ },
+ {
+  "market": "SZ",
+  "code": "159994",
+  "name": "通信ETF银华",
+  "amount": 1059325.75
+ },
+ {
+  "market": "SZ",
+  "code": "159780",
+  "name": "科创创业50ETF南方",
+  "amount": 1057571.25
+ },
+ {
+  "market": "SZ",
+  "code": "159887",
+  "name": "银行ETF富国",
+  "amount": 1049576.375
+ },
+ {
+  "market": "SZ",
+  "code": "159903",
+  "name": "深成ETF南方",
+  "amount": 1044907.1875
+ },
+ {
+  "market": "SZ",
+  "code": "159655",
+  "name": "标普500ETF华夏",
+  "amount": 1039105.8125
+ },
+ {
+  "market": "SZ",
+  "code": "159934",
+  "name": "黄金ETF易方达",
+  "amount": 1036879.5
+ },
+ {
+  "market": "SH",
+  "code": "515980",
+  "name": "人工智能ETF华富",
+  "amount": 1015073.0
+ },
+ {
+  "market": "SH",
+  "code": "560010",
+  "name": "中证1000ETF广发",
+  "amount": 999442.0
+ },
+ {
+  "market": "SH",
+  "code": "588110",
+  "name": "科创成长ETF广发",
+  "amount": 997945.0
+ },
+ {
+  "market": "SZ",
+  "code": "159766",
+  "name": "旅游ETF富国",
+  "amount": 983094.0
+ },
+ {
+  "market": "SZ",
+  "code": "159770",
+  "name": "机器人ETF天弘",
+  "amount": 982987.5
+ },
+ {
+  "market": "SH",
+  "code": "563360",
+  "name": "A500ETF华泰柏瑞",
+  "amount": 979340.0
+ },
+ {
+  "market": "SH",
+  "code": "513700",
+  "name": "港股通医药ETF鹏华",
+  "amount": 975142.0
+ },
+ {
+  "market": "SZ",
+  "code": "159865",
+  "name": "养殖ETF国泰",
+  "amount": 964402.3125
+ },
+ {
+  "market": "SZ",
+  "code": "159297",
+  "name": "港股通创新药ETF南方",
+  "amount": 961457.375
+ },
+ {
+  "market": "SZ",
+  "code": "159937",
+  "name": "黄金ETF博时",
+  "amount": 954848.0
+ },
+ {
+  "market": "SH",
+  "code": "513980",
+  "name": "港股科技ETF景顺",
+  "amount": 954485.0
+ },
+ {
+  "market": "SZ",
+  "code": "159841",
+  "name": "证券ETF天弘",
+  "amount": 944481.6875
+ },
+ {
+  "market": "SZ",
+  "code": "159351",
+  "name": "A500ETF嘉实",
+  "amount": 917428.0
+ },
+ {
+  "market": "SH",
+  "code": "518800",
+  "name": "黄金ETF国泰",
+  "amount": 911390.0
+ },
+ {
+  "market": "SH",
+  "code": "515390",
+  "name": "沪深300ETF华安",
+  "amount": 909798.0
+ },
+ {
+  "market": "SH",
+  "code": "512070",
+  "name": "证券保险ETF易方达",
+  "amount": 903536.0
+ },
+ {
+  "market": "SH",
+  "code": "512630",
+  "name": "卫星ETF广发",
+  "amount": 893752.0
+ },
+ {
+  "market": "SH",
+  "code": "513190",
+  "name": "港股通金融ETF华夏",
+  "amount": 888624.0
+ },
+ {
+  "market": "SH",
+  "code": "513030",
+  "name": "德国ETF华安",
+  "amount": 888527.0
+ },
+ {
+  "market": "SH",
+  "code": "513750",
+  "name": "港股通非银ETF广发",
+  "amount": 881955.0
+ },
+ {
+  "market": "SH",
+  "code": "510900",
+  "name": "恒生中国企业ETF易方达",
+  "amount": 881055.0
+ },
+ {
+  "market": "SH",
+  "code": "512660",
+  "name": "军工ETF国泰",
+  "amount": 877733.0
+ },
+ {
+  "market": "SZ",
+  "code": "159300",
+  "name": "沪深300ETF富国",
+  "amount": 860184.0
+ },
+ {
+  "market": "SZ",
+  "code": "159742",
+  "name": "恒生科技ETF博时",
+  "amount": 857772.3125
+ },
+ {
+  "market": "SZ",
+  "code": "159262",
+  "name": "港股通科技ETF广发",
+  "amount": 848480.375
+ },
+ {
+  "market": "SH",
+  "code": "588030",
+  "name": "科创100ETF博时",
+  "amount": 848264.0
+ },
+ {
+  "market": "SH",
+  "code": "511620",
+  "name": "货币ETF国泰",
+  "amount": 840118.0
+ },
+ {
+  "market": "SZ",
+  "code": "159755",
+  "name": "电池ETF广发",
+  "amount": 827481.625
+ },
+ {
+  "market": "SZ",
+  "code": "159633",
+  "name": "中证1000ETF易方达",
+  "amount": 819547.3125
+ },
+ {
+  "market": "SZ",
+  "code": "159286",
+  "name": "港股通创新药ETF鹏华",
+  "amount": 807789.0
+ },
+ {
+  "market": "SZ",
+  "code": "159201",
+  "name": "自由现金流ETF华夏",
+  "amount": 805385.6875
+ },
+ {
+  "market": "SZ",
+  "code": "159507",
+  "name": "通信ETF广发",
+  "amount": 800088.0
+ },
+ {
+  "market": "SZ",
+  "code": "159901",
+  "name": "深证100ETF易方达",
+  "amount": 791505.0
+ },
+ {
+  "market": "SZ",
+  "code": "159100",
+  "name": "巴西ETF华夏",
+  "amount": 785269.125
+ },
+ {
+  "market": "SZ",
+  "code": "159691",
+  "name": "港股红利ETF工银",
+  "amount": 775692.0
+ },
+ {
+  "market": "SH",
+  "code": "511960",
+  "name": "货币ETF嘉实",
+  "amount": 770015.0
+ },
+ {
+  "market": "SH",
+  "code": "516020",
+  "name": "化工ETF华宝",
+  "amount": 765413.0
+ },
+ {
+  "market": "SZ",
+  "code": "159732",
+  "name": "消费电子ETF华夏",
+  "amount": 755188.1875
+ },
+ {
+  "market": "SH",
+  "code": "530060",
+  "name": "上证指数ETF易方达",
+  "amount": 749710.0
+ },
+ {
+  "market": "SZ",
+  "code": "159607",
+  "name": "中概互联网ETF嘉实",
+  "amount": 743652.8125
+ },
+ {
+  "market": "SH",
+  "code": "515070",
+  "name": "人工智能ETF华夏",
+  "amount": 737629.0
+ },
+ {
+  "market": "SH",
+  "code": "511010",
+  "name": "国债ETF国泰",
+  "amount": 732664.0
+ },
+ {
+  "market": "SZ",
+  "code": "159599",
+  "name": "芯片ETF东财",
+  "amount": 722092.8125
+ },
+ {
+  "market": "SH",
+  "code": "512500",
+  "name": "中证500ETF华夏",
+  "amount": 720094.0
+ },
+ {
+  "market": "SH",
+  "code": "516310",
+  "name": "银行ETF易方达",
+  "amount": 715643.0
+ },
+ {
+  "market": "SH",
+  "code": "561580",
+  "name": "央企红利ETF华泰柏瑞",
+  "amount": 709290.0
+ },
+ {
+  "market": "SZ",
+  "code": "159142",
+  "name": "科创创业人工智能ETF景顺",
+  "amount": 702495.0
+ },
+ {
+  "market": "SH",
+  "code": "513580",
+  "name": "恒生科技ETF华安",
+  "amount": 677878.0
+ },
+ {
+  "market": "SH",
+  "code": "520590",
+  "name": "恒生科技ETF鹏华",
+  "amount": 669849.0
+ },
+ {
+  "market": "SZ",
+  "code": "159870",
+  "name": "化工ETF鹏华",
+  "amount": 653248.0
+ },
+ {
+  "market": "SH",
+  "code": "511700",
+  "name": "货币ETF平安",
+  "amount": 650091.0
+ },
+ {
+  "market": "SZ",
+  "code": "159859",
+  "name": "生物医药ETF天弘",
+  "amount": 648734.3125
+ },
+ {
+  "market": "SZ",
+  "code": "159629",
+  "name": "中证1000ETF富国",
+  "amount": 640704.0
+ },
+ {
+  "market": "SH",
+  "code": "520570",
+  "name": "恒生科技ETF南方",
+  "amount": 626588.0
+ },
+ {
+  "market": "SH",
+  "code": "513070",
+  "name": "港股通消费ETF易方达",
+  "amount": 623238.0
+ },
+ {
+  "market": "SH",
+  "code": "513020",
+  "name": "港股科技ETF国泰",
+  "amount": 606582.0
+ },
+ {
+  "market": "SZ",
+  "code": "159366",
+  "name": "港股医疗ETF永赢",
+  "amount": 606056.5
+ },
+ {
+  "market": "SZ",
+  "code": "159325",
+  "name": "半导体ETF南方",
+  "amount": 605853.5
+ },
+ {
+  "market": "SZ",
+  "code": "159741",
+  "name": "恒生科技ETF嘉实",
+  "amount": 597307.875
+ },
+ {
+  "market": "SZ",
+  "code": "159546",
+  "name": "集成电路ETF国泰",
+  "amount": 589282.8125
+ },
+ {
+  "market": "SH",
+  "code": "588750",
+  "name": "科创芯片ETF汇添富",
+  "amount": 586791.0
+ },
+ {
+  "market": "SH",
+  "code": "588330",
+  "name": "双创50ETF华宝",
+  "amount": 579491.0
+ },
+ {
+  "market": "SH",
+  "code": "513150",
+  "name": "港股通科技ETF华泰柏瑞",
+  "amount": 577434.0
+ },
+ {
+  "market": "SH",
+  "code": "516620",
+  "name": "影视ETF国泰",
+  "amount": 572638.0
+ },
+ {
+  "market": "SH",
+  "code": "588230",
+  "name": "科创200ETF华泰柏瑞",
+  "amount": 568998.0
+ },
+ {
+  "market": "SH",
+  "code": "512200",
+  "name": "房地产ETF南方",
+  "amount": 568699.0
+ },
+ {
+  "market": "SH",
+  "code": "588950",
+  "name": "科创50ETF景顺",
+  "amount": 561312.0
+ },
+ {
+  "market": "SZ",
+  "code": "159695",
+  "name": "通信ETF嘉实",
+  "amount": 559543.625
+ },
+ {
+  "market": "SH",
+  "code": "526090",
+  "name": "N港股通金融ETF富国",
+  "amount": 559146.0
+ },
+ {
+  "market": "SH",
+  "code": "513730",
+  "name": "东南亚科技ETF华泰柏瑞",
+  "amount": 555139.0
+ },
+ {
+  "market": "SH",
+  "code": "516350",
+  "name": "芯片ETF易方达",
+  "amount": 552636.0
+ },
+ {
+  "market": "SH",
+  "code": "588800",
+  "name": "科创100ETF华夏",
+  "amount": 551132.0
+ },
+ {
+  "market": "SH",
+  "code": "588290",
+  "name": "科创芯片ETF华安",
+  "amount": 551118.0
+ },
+ {
+  "market": "SZ",
+  "code": "159209",
+  "name": "红利质量ETF招商",
+  "amount": 550528.0
+ },
+ {
+  "market": "SZ",
+  "code": "159842",
+  "name": "券商ETF银华",
+  "amount": 549426.875
+ },
+ {
+  "market": "SH",
+  "code": "563230",
+  "name": "卫星ETF富国",
+  "amount": 547886.0
+ },
+ {
+  "market": "SZ",
+  "code": "159562",
+  "name": "黄金股ETF华夏",
+  "amount": 539977.0
+ },
+ {
+  "market": "SZ",
+  "code": "159361",
+  "name": "A500ETF易方达",
+  "amount": 538461.0
+ },
+ {
+  "market": "SH",
+  "code": "511070",
+  "name": "公司债ETF南方",
+  "amount": 538179.0
+ },
+ {
+  "market": "SH",
+  "code": "516080",
+  "name": "创新药ETF易方达",
+  "amount": 532848.0
+ },
+ {
+  "market": "SH",
+  "code": "515290",
+  "name": "银行ETF天弘",
+  "amount": 523534.0
+ },
+ {
+  "market": "SZ",
+  "code": "159688",
+  "name": "恒生互联网ETF华安",
+  "amount": 523364.40625
+ },
+ {
+  "market": "SZ",
+  "code": "159582",
+  "name": "半导体ETF博时",
+  "amount": 520245.09375
+ },
+ {
+  "market": "SZ",
+  "code": "159246",
+  "name": "创业板人工智能ETF富国",
+  "amount": 519651.0
+ },
+ {
+  "market": "SH",
+  "code": "513160",
+  "name": "港股科技ETF银华",
+  "amount": 513514.0
+ },
+ {
+  "market": "SH",
+  "code": "512930",
+  "name": "AI人工智能ETF平安",
+  "amount": 512720.0
+ },
+ {
+  "market": "SZ",
+  "code": "159980",
+  "name": "有色ETF大成",
+  "amount": 510041.5
+ },
+ {
+  "market": "SH",
+  "code": "513860",
+  "name": "港股通科技ETF海富通",
+  "amount": 509027.0
+ },
+ {
+  "market": "SZ",
+  "code": "159185",
+  "name": "港股通信息技术ETF鹏华",
+  "amount": 507674.3125
+ },
+ {
+  "market": "SH",
+  "code": "516640",
+  "name": "芯片ETF富国",
+  "amount": 502602.0
+ },
+ {
+  "market": "SH",
+  "code": "513200",
+  "name": "港股通医药ETF易方达",
+  "amount": 502595.0
+ },
+ {
+  "market": "SH",
+  "code": "518680",
+  "name": "金ETF富国",
+  "amount": 501866.0
+ },
+ {
+  "market": "SZ",
+  "code": "159908",
+  "name": "创业板ETF博时",
+  "amount": 500189.8125
+ },
+ {
+  "market": "SH",
+  "code": "562420",
+  "name": "N卫星ETF平安",
+  "amount": 497900.0
+ },
+ {
+  "market": "SZ",
+  "code": "159307",
+  "name": "红利低波100ETF博时",
+  "amount": 483030.8125
+ },
+ {
+  "market": "SZ",
+  "code": "159796",
+  "name": "电池ETF汇添富",
+  "amount": 482833.40625
+ },
+ {
+  "market": "SZ",
+  "code": "159692",
+  "name": "证券ETF东财",
+  "amount": 477477.0
+ },
+ {
+  "market": "SZ",
+  "code": "159005",
+  "name": "快钱ETF汇添富",
+  "amount": 476000.0
+ },
+ {
+  "market": "SH",
+  "code": "520970",
+  "name": "港股通创新药ETF嘉实",
+  "amount": 474822.0
+ },
+ {
+  "market": "SZ",
+  "code": "159352",
+  "name": "A500ETF南方",
+  "amount": 472574.3125
+ },
+ {
+  "market": "SH",
+  "code": "515100",
+  "name": "红利低波100ETF景顺",
+  "amount": 468631.0
+ },
+ {
+  "market": "SH",
+  "code": "588190",
+  "name": "科创100ETF银华",
+  "amount": 464810.0
+ },
+ {
+  "market": "SH",
+  "code": "589120",
+  "name": "科创创新药ETF汇添富",
+  "amount": 461020.0
+ },
+ {
+  "market": "SZ",
+  "code": "158061",
+  "name": "创业板算力ETF天弘",
+  "amount": 456663.0
+ },
+ {
+  "market": "SH",
+  "code": "588380",
+  "name": "科创创业ETF富国",
+  "amount": 451292.0
+ },
+ {
+  "market": "SH",
+  "code": "515450",
+  "name": "红利低波50ETF南方",
+  "amount": 446978.0
+ },
+ {
+  "market": "SH",
+  "code": "515230",
+  "name": "软件ETF国泰",
+  "amount": 442483.0
+ },
+ {
+  "market": "SH",
+  "code": "518600",
+  "name": "金ETF广发",
+  "amount": 441128.0
+ },
+ {
+  "market": "SZ",
+  "code": "159828",
+  "name": "医疗ETF国泰",
+  "amount": 436935.59375
+ },
+ {
+  "market": "SZ",
+  "code": "159782",
+  "name": "双创50ETF银华",
+  "amount": 434522.1875
+ },
+ {
+  "market": "SZ",
+  "code": "159227",
+  "name": "航空航天ETF华夏",
+  "amount": 433726.0
+ },
+ {
+  "market": "SH",
+  "code": "515790",
+  "name": "光伏ETF华泰柏瑞",
+  "amount": 425576.0
+ },
+ {
+  "market": "SZ",
+  "code": "159101",
+  "name": "港股通科技ETF华夏",
+  "amount": 424889.59375
+ },
+ {
+  "market": "SH",
+  "code": "513820",
+  "name": "港股通红利ETF汇添富",
+  "amount": 421568.0
+ },
+ {
+  "market": "SZ",
+  "code": "159278",
+  "name": "机器人ETF鹏华",
+  "amount": 414481.1875
+ },
+ {
+  "market": "SZ",
+  "code": "159707",
+  "name": "地产ETF华宝",
+  "amount": 412294.1875
+ },
+ {
+  "market": "SH",
+  "code": "520980",
+  "name": "港股通科技ETF汇添富",
+  "amount": 409392.0
+ },
+ {
+  "market": "SH",
+  "code": "512290",
+  "name": "生物医药ETF国泰",
+  "amount": 403591.0
+ },
+ {
+  "market": "SH",
+  "code": "510510",
+  "name": "中证500ETF广发",
+  "amount": 400600.0
+ },
+ {
+  "market": "SZ",
+  "code": "159943",
+  "name": "深证成指ETF大成",
+  "amount": 397632.5
+ },
+ {
+  "market": "SH",
+  "code": "520990",
+  "name": "港股央企红利ETF景顺",
+  "amount": 395901.0
+ },
+ {
+  "market": "SZ",
+  "code": "159202",
+  "name": "恒生互联网ETF万家",
+  "amount": 395595.1875
+ },
+ {
+  "market": "SZ",
+  "code": "159330",
+  "name": "沪深300ETF东财",
+  "amount": 394776.6875
+ },
+ {
+  "market": "SH",
+  "code": "512570",
+  "name": "证券ETF易方达",
+  "amount": 393924.0
+ },
+ {
+  "market": "SH",
+  "code": "510910",
+  "name": "上证指数ETF南方",
+  "amount": 391574.0
+ },
+ {
+  "market": "SH",
+  "code": "510720",
+  "name": "红利国企ETF国泰",
+  "amount": 387000.0
+ },
+ {
+  "market": "SH",
+  "code": "515000",
+  "name": "科技ETF华宝",
+  "amount": 376977.0
+ },
+ {
+  "market": "SH",
+  "code": "516820",
+  "name": "医疗创新ETF平安",
+  "amount": 356759.0
+ },
+ {
+  "market": "SH",
+  "code": "588780",
+  "name": "科创芯片设计ETF国联安",
+  "amount": 354684.0
+ },
+ {
+  "market": "SZ",
+  "code": "158041",
+  "name": "创业板算力ETF华夏",
+  "amount": 354550.0
+ },
+ {
+  "market": "SH",
+  "code": "512040",
+  "name": "价值ETF富国",
+  "amount": 353976.0
+ },
+ {
+  "market": "SH",
+  "code": "520690",
+  "name": "港股创新药ETF博时",
+  "amount": 352673.0
+ },
+ {
+  "market": "SH",
+  "code": "520550",
+  "name": "港股红利低波ETF招商",
+  "amount": 346663.0
+ },
+ {
+  "market": "SZ",
+  "code": "159207",
+  "name": "高股息ETF广发",
+  "amount": 346159.8125
+ },
+ {
+  "market": "SH",
+  "code": "517400",
+  "name": "黄金股ETF国泰",
+  "amount": 344094.0
+ },
+ {
+  "market": "SH",
+  "code": "588040",
+  "name": "科创50ETF鹏华",
+  "amount": 343700.0
+ },
+ {
+  "market": "SZ",
+  "code": "159133",
+  "name": "化工ETF天弘",
+  "amount": 329040.59375
+ },
+ {
+  "market": "SH",
+  "code": "589070",
+  "name": "科创芯片设计ETF天弘",
+  "amount": 327209.0
+ },
+ {
+  "market": "SH",
+  "code": "513240",
+  "name": "港股通信息技术ETF华安",
+  "amount": 326222.0
+ },
+ {
+  "market": "SZ",
+  "code": "158050",
+  "name": "创业板算力ETF易方达",
+  "amount": 326095.0
+ },
+ {
+  "market": "SH",
+  "code": "589150",
+  "name": "科创50ETF平安",
+  "amount": 324033.0
+ },
+ {
+  "market": "SZ",
+  "code": "159329",
+  "name": "沙特ETF南方",
+  "amount": 319697.0
+ },
+ {
+  "market": "SH",
+  "code": "562820",
+  "name": "集成电路ETF嘉实",
+  "amount": 318726.0
+ },
+ {
+  "market": "SH",
+  "code": "515020",
+  "name": "银行ETF华夏",
+  "amount": 317906.0
+ },
+ {
+  "market": "SZ",
+  "code": "159263",
+  "name": "价值ETF易方达",
+  "amount": 311364.3125
+ },
+ {
+  "market": "SZ",
+  "code": "159830",
+  "name": "金ETF天弘",
+  "amount": 301852.0
+ },
+ {
+  "market": "SH",
+  "code": "515400",
+  "name": "大数据ETF富国",
+  "amount": 300405.0
+ },
+ {
+  "market": "SH",
+  "code": "518660",
+  "name": "黄金ETF工银",
+  "amount": 299965.0
+ },
+ {
+  "market": "SZ",
+  "code": "159566",
+  "name": "储能电池ETF易方达",
+  "amount": 299366.40625
+ },
+ {
+  "market": "SZ",
+  "code": "158049",
+  "name": "创业板算力ETF广发",
+  "amount": 298356.03125
+ },
+ {
+  "market": "SZ",
+  "code": "159883",
+  "name": "医疗器械ETF永赢",
+  "amount": 291895.1875
+ },
+ {
+  "market": "SH",
+  "code": "562800",
+  "name": "稀有金属ETF嘉实",
+  "amount": 289785.0
+ },
+ {
+  "market": "SH",
+  "code": "515370",
+  "name": "光伏ETF华夏",
+  "amount": 288059.0
+ },
+ {
+  "market": "SH",
+  "code": "588130",
+  "name": "科创医药ETF华夏",
+  "amount": 287826.0
+ },
+ {
+  "market": "SH",
+  "code": "515260",
+  "name": "电子ETF华宝",
+  "amount": 282072.0
+ },
+ {
+  "market": "SZ",
+  "code": "159218",
+  "name": "卫星ETF招商",
+  "amount": 281304.40625
+ },
+ {
+  "market": "SH",
+  "code": "588280",
+  "name": "科创50ETF华安",
+  "amount": 281088.0
+ },
+ {
+  "market": "SZ",
+  "code": "159560",
+  "name": "芯片ETF景顺",
+  "amount": 278210.8125
+ },
+ {
+  "market": "SH",
+  "code": "516010",
+  "name": "游戏ETF国泰",
+  "amount": 275797.0
+ },
+ {
+  "market": "SZ",
+  "code": "159925",
+  "name": "沪深300ETF南方",
+  "amount": 272897.59375
+ },
+ {
+  "market": "SH",
+  "code": "513970",
+  "name": "恒生消费ETF景顺",
+  "amount": 271637.0
+ },
+ {
+  "market": "SZ",
+  "code": "159650",
+  "name": "国开债ETF博时",
+  "amount": 270515.0
+ },
+ {
+  "market": "SH",
+  "code": "513280",
+  "name": "恒生生物科技ETF汇添富",
+  "amount": 270477.0
+ },
+ {
+  "market": "SH",
+  "code": "516920",
+  "name": "芯片ETF汇添富",
+  "amount": 269895.0
+ },
+ {
+  "market": "SZ",
+  "code": "159568",
+  "name": "港股互联网ETF博时",
+  "amount": 268329.59375
+ },
+ {
+  "market": "SZ",
+  "code": "159559",
+  "name": "机器人ETF景顺",
+  "amount": 266640.0
+ },
+ {
+  "market": "SZ",
+  "code": "159671",
+  "name": "稀有金属ETF工银",
+  "amount": 265084.625
+ },
+ {
+  "market": "SH",
+  "code": "562660",
+  "name": "中证2000ETF华夏",
+  "amount": 261898.0
+ },
+ {
+  "market": "SH",
+  "code": "588890",
+  "name": "科创芯片ETF南方",
+  "amount": 257278.0
+ },
+ {
+  "market": "SH",
+  "code": "588370",
+  "name": "科创50增强ETF南方",
+  "amount": 255606.0
+ },
+ {
+  "market": "SZ",
+  "code": "159930",
+  "name": "能源ETF汇添富",
+  "amount": 255123.59375
+ },
+ {
+  "market": "SH",
+  "code": "513800",
+  "name": "日本东证指数ETF南方",
+  "amount": 254625.0
+ },
+ {
+  "market": "SH",
+  "code": "520510",
+  "name": "港股通医疗ETF华夏",
+  "amount": 254262.0
+ },
+ {
+  "market": "SH",
+  "code": "515170",
+  "name": "食品饮料ETF华夏",
+  "amount": 253919.0
+ },
+ {
+  "market": "SH",
+  "code": "520660",
+  "name": "港股通央企红利ETF南方",
+  "amount": 249697.0
+ },
+ {
+  "market": "SH",
+  "code": "588180",
+  "name": "科创50ETF国联安",
+  "amount": 249660.0
+ },
+ {
+  "market": "SH",
+  "code": "551510",
+  "name": "科创债ETF华泰柏瑞",
+  "amount": 247128.0
+ },
+ {
+  "market": "SZ",
+  "code": "159111",
+  "name": "科创债ETF天弘",
+  "amount": 246996.0
+ },
+ {
+  "market": "SZ",
+  "code": "159700",
+  "name": "科创债ETF南方",
+  "amount": 245517.59375
+ },
+ {
+  "market": "SZ",
+  "code": "159699",
+  "name": "恒生消费ETF广发",
+  "amount": 244180.0
+ },
+ {
+  "market": "SH",
+  "code": "551300",
+  "name": "科创债ETF摩根",
+  "amount": 243031.0
+ },
+ {
+  "market": "SZ",
+  "code": "159267",
+  "name": "航天ETF华安",
+  "amount": 242466.0
+ },
+ {
+  "market": "SH",
+  "code": "561360",
+  "name": "石油ETF国泰",
+  "amount": 242278.0
+ },
+ {
+  "market": "SH",
+  "code": "588790",
+  "name": "科创AIETF博时",
+  "amount": 241758.0
+ },
+ {
+  "market": "SZ",
+  "code": "159198",
+  "name": "港股通信息技术ETF富国",
+  "amount": 239911.203125
+ },
+ {
+  "market": "SH",
+  "code": "511190",
+  "name": "信用债ETF海富通",
+  "amount": 237822.0
+ },
+ {
+  "market": "SH",
+  "code": "589130",
+  "name": "科创芯片ETF易方达",
+  "amount": 231767.0
+ },
+ {
+  "market": "SH",
+  "code": "520900",
+  "name": "港股通红利ETF广发",
+  "amount": 231400.0
+ },
+ {
+  "market": "SH",
+  "code": "511020",
+  "name": "国债ETF平安",
+  "amount": 225640.0
+ },
+ {
+  "market": "SZ",
+  "code": "159545",
+  "name": "港股通红利低波ETF易方达",
+  "amount": 217804.5
+ },
+ {
+  "market": "SZ",
+  "code": "159272",
+  "name": "机器人ETF富国",
+  "amount": 215545.203125
+ },
+ {
+  "market": "SZ",
+  "code": "159922",
+  "name": "中证500ETF嘉实",
+  "amount": 214750.1875
+ },
+ {
+  "market": "SH",
+  "code": "562950",
+  "name": "消费电子ETF易方达",
+  "amount": 211806.0
+ },
+ {
+  "market": "SH",
+  "code": "560570",
+  "name": "A500红利ETF国联安",
+  "amount": 210250.0
+ },
+ {
+  "market": "SH",
+  "code": "517770",
+  "name": "游戏传媒ETF浦银",
+  "amount": 208583.0
+ },
+ {
+  "market": "SH",
+  "code": "515800",
+  "name": "中证800ETF汇添富",
+  "amount": 208542.0
+ },
+ {
+  "market": "SZ",
+  "code": "159309",
+  "name": "油气ETF汇添富",
+  "amount": 208104.0
+ },
+ {
+  "market": "SZ",
+  "code": "159105",
+  "name": "恒生生物科技ETF易方达",
+  "amount": 207680.5
+ },
+ {
+  "market": "SZ",
+  "code": "159768",
+  "name": "房地产ETF银华",
+  "amount": 207348.0
+ },
+ {
+  "market": "SZ",
+  "code": "159816",
+  "name": "0-4年地方债ETF鹏华",
+  "amount": 204813.0
+ },
+ {
+  "market": "SZ",
+  "code": "159137",
+  "name": "港股通医疗ETF华宝",
+  "amount": 204020.296875
+ },
+ {
+  "market": "SH",
+  "code": "515310",
+  "name": "沪深300ETF汇添富",
+  "amount": 197852.0
+ },
+ {
+  "market": "SZ",
+  "code": "159337",
+  "name": "中证500ETF东财",
+  "amount": 197565.59375
+ },
+ {
+  "market": "SZ",
+  "code": "159369",
+  "name": "创业板50ETF易方达",
+  "amount": 195390.296875
+ },
+ {
+  "market": "SH",
+  "code": "560080",
+  "name": "中药ETF汇添富",
+  "amount": 192836.0
+ },
+ {
+  "market": "SZ",
+  "code": "159121",
+  "name": "港股通汽车ETF易方达",
+  "amount": 190436.5
+ },
+ {
+  "market": "SH",
+  "code": "517380",
+  "name": "创新药ETF天弘",
+  "amount": 187708.0
+ },
+ {
+  "market": "SH",
+  "code": "510140",
+  "name": "上证综指ETF华夏",
+  "amount": 184330.0
+ },
+ {
+  "market": "SZ",
+  "code": "159698",
+  "name": "粮食ETF鹏华",
+  "amount": 182515.0
+ },
+ {
+  "market": "SH",
+  "code": "563800",
+  "name": "A500ETF广发",
+  "amount": 181049.0
+ },
+ {
+  "market": "SH",
+  "code": "561560",
+  "name": "电力ETF华泰柏瑞",
+  "amount": 180054.0
+ },
+ {
+  "market": "SH",
+  "code": "513920",
+  "name": "港股通央企红利ETF华安",
+  "amount": 179239.0
+ },
+ {
+  "market": "SH",
+  "code": "513690",
+  "name": "港股红利ETF博时",
+  "amount": 176139.0
+ },
+ {
+  "market": "SH",
+  "code": "512580",
+  "name": "环保ETF广发",
+  "amount": 175455.0
+ },
+ {
+  "market": "SH",
+  "code": "520600",
+  "name": "港股通汽车ETF广发",
+  "amount": 174110.0
+ },
+ {
+  "market": "SZ",
+  "code": "159948",
+  "name": "创业板ETF南方",
+  "amount": 173789.796875
+ },
+ {
+  "market": "SZ",
+  "code": "159839",
+  "name": "生物医药ETF汇添富",
+  "amount": 173499.5
+ },
+ {
+  "market": "SZ",
+  "code": "159651",
+  "name": "国开债ETF平安",
+  "amount": 173236.796875
+ },
+ {
+  "market": "SH",
+  "code": "588810",
+  "name": "科创芯片ETF富国",
+  "amount": 170813.0
+ },
+ {
+  "market": "SZ",
+  "code": "159615",
+  "name": "恒生生物科技ETF南方",
+  "amount": 170303.203125
+ },
+ {
+  "market": "SH",
+  "code": "589000",
+  "name": "科创综指ETF华夏",
+  "amount": 168349.0
+ },
+ {
+  "market": "SZ",
+  "code": "159612",
+  "name": "标普500ETF国泰",
+  "amount": 167553.59375
+ },
+ {
+  "market": "SH",
+  "code": "588010",
+  "name": "科创新材料ETF博时",
+  "amount": 166732.0
+ },
+ {
+  "market": "SH",
+  "code": "560110",
+  "name": "中证1000ETF汇添富",
+  "amount": 165494.0
+ },
+ {
+  "market": "SH",
+  "code": "551520",
+  "name": "科创债ETF汇添富",
+  "amount": 164299.0
+ },
+ {
+  "market": "SH",
+  "code": "589800",
+  "name": "科创综指ETF易方达",
+  "amount": 162105.0
+ },
+ {
+  "market": "SH",
+  "code": "560860",
+  "name": "工业有色ETF万家",
+  "amount": 161641.0
+ },
+ {
+  "market": "SZ",
+  "code": "159750",
+  "name": "港股科技50ETF招商",
+  "amount": 160240.296875
+ },
+ {
+  "market": "SZ",
+  "code": "159652",
+  "name": "有色ETF汇添富",
+  "amount": 159965.0
+ },
+ {
+  "market": "SZ",
+  "code": "159680",
+  "name": "中证1000增强ETF招商",
+  "amount": 159316.203125
+ },
+ {
+  "market": "SZ",
+  "code": "159905",
+  "name": "红利ETF工银",
+  "amount": 156465.0
+ },
+ {
+  "market": "SZ",
+  "code": "159287",
+  "name": "创业板综ETF博时",
+  "amount": 154874.5
+ },
+ {
+  "market": "SH",
+  "code": "560610",
+  "name": "A500ETF招商",
+  "amount": 154309.0
+ },
+ {
+  "market": "SZ",
+  "code": "159128",
+  "name": "港股科技ETF天弘",
+  "amount": 154028.796875
+ },
+ {
+  "market": "SH",
+  "code": "516100",
+  "name": "金融科技ETF华夏",
+  "amount": 153775.0
+ },
+ {
+  "market": "SZ",
+  "code": "159371",
+  "name": "创业板50ETF富国",
+  "amount": 153620.59375
+ },
+ {
+  "market": "SH",
+  "code": "588300",
+  "name": "科创创业50ETF招商",
+  "amount": 153520.0
+ },
+ {
+  "market": "SH",
+  "code": "526030",
+  "name": "港股通信息技术ETF汇添富",
+  "amount": 153121.0
+ },
+ {
+  "market": "SH",
+  "code": "510180",
+  "name": "上证180ETF华安",
+  "amount": 153058.0
+ },
+ {
+  "market": "SH",
+  "code": "513220",
+  "name": "中概互联ETF招商",
+  "amount": 152750.0
+ },
+ {
+  "market": "SZ",
+  "code": "159147",
+  "name": "电池ETF南方",
+  "amount": 152224.796875
+ },
+ {
+  "market": "SZ",
+  "code": "159222",
+  "name": "自由现金流ETF易方达",
+  "amount": 149040.0
+ },
+ {
+  "market": "SH",
+  "code": "589520",
+  "name": "科创人工智能ETF华宝",
+  "amount": 148852.0
+ },
+ {
+  "market": "SH",
+  "code": "515970",
+  "name": "工程机械ETF华夏",
+  "amount": 147600.0
+ },
+ {
+  "market": "SH",
+  "code": "588990",
+  "name": "科创芯片ETF博时",
+  "amount": 147407.0
+ },
+ {
+  "market": "SH",
+  "code": "560090",
+  "name": "证券ETF汇添富",
+  "amount": 146886.0
+ },
+ {
+  "market": "SZ",
+  "code": "159532",
+  "name": "中证2000ETF易方达",
+  "amount": 143514.0
+ },
+ {
+  "market": "SZ",
+  "code": "159102",
+  "name": "港股通生物科技ETF华安",
+  "amount": 143475.796875
+ },
+ {
+  "market": "SZ",
+  "code": "159367",
+  "name": "创业板50ETF华夏",
+  "amount": 143312.40625
+ },
+ {
+  "market": "SH",
+  "code": "520530",
+  "name": "港股通科技ETF东财",
+  "amount": 142877.0
+ },
+ {
+  "market": "SZ",
+  "code": "159758",
+  "name": "红利质量ETF华夏",
+  "amount": 142423.203125
+ },
+ {
+  "market": "SZ",
+  "code": "159805",
+  "name": "传媒ETF鹏华",
+  "amount": 142238.703125
+ },
+ {
+  "market": "SZ",
+  "code": "159016",
+  "name": "证券ETF广发",
+  "amount": 141708.0
+ },
+ {
+  "market": "SH",
+  "code": "516650",
+  "name": "有色金属ETF华夏",
+  "amount": 141500.0
+ },
+ {
+  "market": "SH",
+  "code": "516190",
+  "name": "传媒ETF华夏",
+  "amount": 141378.0
+ },
+ {
+  "market": "SH",
+  "code": "520650",
+  "name": "港股通互联网ETF南方",
+  "amount": 139556.0
+ },
+ {
+  "market": "SH",
+  "code": "513600",
+  "name": "恒生指数ETF南方",
+  "amount": 137651.0
+ },
+ {
+  "market": "SH",
+  "code": "515130",
+  "name": "沪深300ETF博时",
+  "amount": 137172.0
+ },
+ {
+  "market": "SH",
+  "code": "562860",
+  "name": "疫苗ETF嘉实",
+  "amount": 136749.0
+ },
+ {
+  "market": "SH",
+  "code": "588460",
+  "name": "科创50增强ETF鹏华",
+  "amount": 135615.0
+ },
+ {
+  "market": "SZ",
+  "code": "159681",
+  "name": "创业板50ETF鹏华",
+  "amount": 133308.296875
+ },
+ {
+  "market": "SZ",
+  "code": "159718",
+  "name": "港股医药ETF平安",
+  "amount": 133045.203125
+ },
+ {
+  "market": "SH",
+  "code": "512670",
+  "name": "国防ETF鹏华",
+  "amount": 132492.0
+ },
+ {
+  "market": "SH",
+  "code": "562510",
+  "name": "旅游ETF华夏",
+  "amount": 132371.0
+ },
+ {
+  "market": "SH",
+  "code": "511810",
+  "name": "货币ETF南方",
+  "amount": 130005.0
+ },
+ {
+  "market": "SH",
+  "code": "511770",
+  "name": "金鹰增益货币ETF",
+  "amount": 129999.0
+ },
+ {
+  "market": "SH",
+  "code": "513720",
+  "name": "港股互联网ETF国泰",
+  "amount": 129930.0
+ },
+ {
+  "market": "SZ",
+  "code": "159857",
+  "name": "光伏ETF天弘",
+  "amount": 127943.203125
+ },
+ {
+  "market": "SZ",
+  "code": "159569",
+  "name": "港股红利低波ETF景顺",
+  "amount": 127917.0
+ },
+ {
+  "market": "SZ",
+  "code": "159814",
+  "name": "创业大盘ETF西部利得",
+  "amount": 126828.0
+ },
+ {
+  "market": "SZ",
+  "code": "159890",
+  "name": "云计算ETF招商",
+  "amount": 125800.203125
+ },
+ {
+  "market": "SZ",
+  "code": "159735",
+  "name": "港股消费ETF银华",
+  "amount": 125334.0
+ },
+ {
+  "market": "SZ",
+  "code": "159996",
+  "name": "家电ETF国泰",
+  "amount": 125145.0
+ },
+ {
+  "market": "SH",
+  "code": "515010",
+  "name": "证券ETF华夏",
+  "amount": 124608.0
+ },
+ {
+  "market": "SH",
+  "code": "511110",
+  "name": "公司债ETF易方达",
+  "amount": 124577.0
+ },
+ {
+  "market": "SH",
+  "code": "512700",
+  "name": "银行ETF南方",
+  "amount": 124513.0
+ },
+ {
+  "market": "SH",
+  "code": "588320",
+  "name": "双创50增强ETF广发",
+  "amount": 122626.0
+ },
+ {
+  "market": "SH",
+  "code": "516160",
+  "name": "新能源ETF南方",
+  "amount": 122090.0
+ },
+ {
+  "market": "SZ",
+  "code": "159608",
+  "name": "稀有金属ETF广发",
+  "amount": 121754.203125
+ },
+ {
+  "market": "SH",
+  "code": "510030",
+  "name": "价值ETF华宝",
+  "amount": 121109.0
+ },
+ {
+  "market": "SH",
+  "code": "515380",
+  "name": "沪深300ETF泰康",
+  "amount": 121104.0
+ },
+ {
+  "market": "SZ",
+  "code": "159590",
+  "name": "软件ETF汇添富",
+  "amount": 120619.5
+ },
+ {
+  "market": "SZ",
+  "code": "159825",
+  "name": "农业ETF富国",
+  "amount": 119370.0
+ },
+ {
+  "market": "SZ",
+  "code": "159107",
+  "name": "创业板软件ETF富国",
+  "amount": 119197.0
+ },
+ {
+  "market": "SH",
+  "code": "589030",
+  "name": "科创芯片设计ETF易方达",
+  "amount": 118643.0
+ },
+ {
+  "market": "SH",
+  "code": "517090",
+  "name": "央企共赢ETF国泰",
+  "amount": 117967.0
+ },
+ {
+  "market": "SH",
+  "code": "513550",
+  "name": "港股通50ETF华泰柏瑞",
+  "amount": 116854.0
+ },
+ {
+  "market": "SZ",
+  "code": "159997",
+  "name": "电子ETF天弘",
+  "amount": 116071.5
+ },
+ {
+  "market": "SH",
+  "code": "520860",
+  "name": "港股通科技ETF富国",
+  "amount": 115558.0
+ },
+ {
+  "market": "SH",
+  "code": "561910",
+  "name": "电池ETF招商",
+  "amount": 115294.0
+ },
+ {
+  "market": "SH",
+  "code": "551500",
+  "name": "科创债ETF易方达",
+  "amount": 113080.0
+ },
+ {
+  "market": "SZ",
+  "code": "159141",
+  "name": "科创创业人工智能ETF永赢",
+  "amount": 112654.796875
+ },
+ {
+  "market": "SZ",
+  "code": "159382",
+  "name": "创业板人工智能ETF南方",
+  "amount": 111177.203125
+ },
+ {
+  "market": "SH",
+  "code": "589190",
+  "name": "科创芯片ETF华宝",
+  "amount": 109096.0
+ },
+ {
+  "market": "SH",
+  "code": "561090",
+  "name": "A500增强ETF华安",
+  "amount": 109000.0
+ },
+ {
+  "market": "SH",
+  "code": "513910",
+  "name": "港股通央企红利ETF华夏",
+  "amount": 108324.0
+ },
+ {
+  "market": "SH",
+  "code": "588830",
+  "name": "科创新能源ETF鹏华",
+  "amount": 108209.0
+ },
+ {
+  "market": "SH",
+  "code": "516860",
+  "name": "金融科技ETF博时",
+  "amount": 107038.0
+ },
+ {
+  "market": "SZ",
+  "code": "159030",
+  "name": "粮食ETF华夏",
+  "amount": 106945.296875
+ },
+ {
+  "market": "SH",
+  "code": "526050",
+  "name": "港股通信息技术ETF招商",
+  "amount": 106587.0
+ },
+ {
+  "market": "SH",
+  "code": "526010",
+  "name": "港股通医疗ETF汇添富",
+  "amount": 106290.0
+ },
+ {
+  "market": "SZ",
+  "code": "159622",
+  "name": "创新药ETF东财",
+  "amount": 105988.796875
+ },
+ {
+  "market": "SH",
+  "code": "588920",
+  "name": "科创芯片ETF鹏华",
+  "amount": 105937.0
+ },
+ {
+  "market": "SH",
+  "code": "560630",
+  "name": "机器人ETF万家",
+  "amount": 104799.0
+ },
+ {
+  "market": "SZ",
+  "code": "159151",
+  "name": "食品ETF华夏",
+  "amount": 104190.0
+ },
+ {
+  "market": "SZ",
+  "code": "159807",
+  "name": "科技ETF易方达",
+  "amount": 101633.3984375
+ },
+ {
+  "market": "SH",
+  "code": "589230",
+  "name": "科创人工智能ETF南方",
+  "amount": 100270.0
+ },
+ {
+  "market": "SH",
+  "code": "560260",
+  "name": "医疗ETF广发",
+  "amount": 100182.0
+ },
+ {
+  "market": "SH",
+  "code": "561550",
+  "name": "中证500增强ETF华泰柏瑞",
+  "amount": 99389.0
+ },
+ {
+  "market": "SH",
+  "code": "589180",
+  "name": "科创新材料ETF汇添富",
+  "amount": 99051.0
+ },
+ {
+  "market": "SH",
+  "code": "589390",
+  "name": "科创芯片设计ETF招商",
+  "amount": 96999.0
+ },
+ {
+  "market": "SZ",
+  "code": "159388",
+  "name": "创业板人工智能ETF国泰",
+  "amount": 96379.796875
+ },
+ {
+  "market": "SZ",
+  "code": "159305",
+  "name": "储能电池ETF广发",
+  "amount": 95694.5
+ },
+ {
+  "market": "SH",
+  "code": "515700",
+  "name": "新能源车ETF平安",
+  "amount": 93338.0
+ },
+ {
+  "market": "SZ",
+  "code": "159572",
+  "name": "创业板200ETF易方达",
+  "amount": 92950.0
+ },
+ {
+  "market": "SZ",
+  "code": "159103",
+  "name": "金融科技ETF汇添富",
+  "amount": 92375.0
+ },
+ {
+  "market": "SH",
+  "code": "512810",
+  "name": "军工ETF华宝",
+  "amount": 91083.0
+ },
+ {
+  "market": "SH",
+  "code": "510100",
+  "name": "上证50ETF易方达",
+  "amount": 90848.0
+ },
+ {
+  "market": "SH",
+  "code": "512560",
+  "name": "军工ETF易方达",
+  "amount": 89282.0
+ },
+ {
+  "market": "SZ",
+  "code": "159649",
+  "name": "国开债ETF华安",
+  "amount": 88488.0
+ },
+ {
+  "market": "SZ",
+  "code": "159751",
+  "name": "港股通科技ETF鹏华",
+  "amount": 88054.6015625
+ },
+ {
+  "market": "SH",
+  "code": "560390",
+  "name": "电网设备ETF易方达",
+  "amount": 87764.0
+ },
+ {
+  "market": "SZ",
+  "code": "159339",
+  "name": "A500ETF银华",
+  "amount": 87450.0
+ },
+ {
+  "market": "SZ",
+  "code": "159855",
+  "name": "影视ETF银华",
+  "amount": 87092.203125
+ },
+ {
+  "market": "SH",
+  "code": "510150",
+  "name": "消费ETF招商",
+  "amount": 87072.0
+ },
+ {
+  "market": "SZ",
+  "code": "159280",
+  "name": "港股通互联网ETF汇添富",
+  "amount": 86494.5
+ },
+ {
+  "market": "SZ",
+  "code": "158047",
+  "name": "粮食ETF永赢",
+  "amount": 86416.3203125
+ },
+ {
+  "market": "SH",
+  "code": "513660",
+  "name": "恒生ETF华夏",
+  "amount": 86183.0
+ },
+ {
+  "market": "SH",
+  "code": "516510",
+  "name": "云计算ETF易方达",
+  "amount": 85577.0
+ },
+ {
+  "market": "SH",
+  "code": "560360",
+  "name": "软件ETF万家",
+  "amount": 85464.0
+ },
+ {
+  "market": "SZ",
+  "code": "158042",
+  "name": "恒生科技ETF富国",
+  "amount": 84167.7890625
+ },
+ {
+  "market": "SZ",
+  "code": "159972",
+  "name": "5年地方债ETF鹏华",
+  "amount": 83991.6015625
+ },
+ {
+  "market": "SH",
+  "code": "561460",
+  "name": "人工智能ETF天弘",
+  "amount": 83519.0
+ },
+ {
+  "market": "SH",
+  "code": "563080",
+  "name": "中证A50ETF易方达",
+  "amount": 83500.0
+ },
+ {
+  "market": "SZ",
+  "code": "159748",
+  "name": "创新药ETF富国",
+  "amount": 83430.0
+ },
+ {
+  "market": "SZ",
+  "code": "159132",
+  "name": "恒生生物科技ETF富国",
+  "amount": 83111.8984375
+ },
+ {
+  "market": "SZ",
+  "code": "159625",
+  "name": "绿色电力ETF嘉实",
+  "amount": 83076.0
+ },
+ {
+  "market": "SZ",
+  "code": "159303",
+  "name": "恒生医疗ETF大成",
+  "amount": 82413.1015625
+ },
+ {
+  "market": "SZ",
+  "code": "159665",
+  "name": "半导体龙头ETF工银",
+  "amount": 82253.0
+ },
+ {
+  "market": "SZ",
+  "code": "159110",
+  "name": "科创债ETF万家",
+  "amount": 81512.0
+ },
+ {
+  "market": "SZ",
+  "code": "159840",
+  "name": "锂电池ETF工银",
+  "amount": 81472.0
+ },
+ {
+  "market": "SZ",
+  "code": "159673",
+  "name": "沪深300ETF鹏华",
+  "amount": 80643.6015625
+ },
+ {
+  "market": "SH",
+  "code": "512820",
+  "name": "银行ETF汇添富",
+  "amount": 80279.0
+ },
+ {
+  "market": "SZ",
+  "code": "159321",
+  "name": "黄金股ETF华安",
+  "amount": 79407.5
+ },
+ {
+  "market": "SH",
+  "code": "589680",
+  "name": "科创综指ETF鹏华",
+  "amount": 77683.0
+ },
+ {
+  "market": "SH",
+  "code": "513560",
+  "name": "香港科技ETF兴银",
+  "amount": 77563.0
+ },
+ {
+  "market": "SZ",
+  "code": "159152",
+  "name": "港股通科技ETF平安",
+  "amount": 77296.3984375
+ },
+ {
+  "market": "SH",
+  "code": "562930",
+  "name": "软件ETF易方达",
+  "amount": 77262.0
+ },
+ {
+  "market": "SH",
+  "code": "510580",
+  "name": "中证500ETF易方达",
+  "amount": 76914.0
+ },
+ {
+  "market": "SZ",
+  "code": "159241",
+  "name": "航空航天ETF天弘",
+  "amount": 76788.0
+ },
+ {
+  "market": "SZ",
+  "code": "159676",
+  "name": "创业板增强ETF富国",
+  "amount": 76659.6015625
+ },
+ {
+  "market": "SZ",
+  "code": "159242",
+  "name": "创业板人工智能ETF大成",
+  "amount": 76006.0
+ },
+ {
+  "market": "SZ",
+  "code": "159140",
+  "name": "科创创业人工智能ETF易方达",
+  "amount": 75672.0
+ },
+ {
+  "market": "SZ",
+  "code": "159875",
+  "name": "新能源ETF嘉实",
+  "amount": 74742.203125
+ },
+ {
+  "market": "SZ",
+  "code": "159157",
+  "name": "有色金属ETF天弘",
+  "amount": 74610.0625
+ },
+ {
+  "market": "SH",
+  "code": "589210",
+  "name": "科创芯片设计ETF广发",
+  "amount": 74608.0
+ },
+ {
+  "market": "SZ",
+  "code": "158022",
+  "name": "创业板综增强ETF国联",
+  "amount": 73814.0
+ },
+ {
+  "market": "SZ",
+  "code": "159012",
+  "name": "科创创业50ETF鹏华",
+  "amount": 73420.796875
+ },
+ {
+  "market": "SZ",
+  "code": "159500",
+  "name": "中证500ETF富国",
+  "amount": 73071.0
+ },
+ {
+  "market": "SH",
+  "code": "520710",
+  "name": "港股通信息技术ETF广发",
+  "amount": 71455.0
+ },
+ {
+  "market": "SH",
+  "code": "517120",
+  "name": "创新药ETF华泰柏瑞",
+  "amount": 71222.0
+ },
+ {
+  "market": "SH",
+  "code": "515650",
+  "name": "消费50ETF富国",
+  "amount": 71030.0
+ },
+ {
+  "market": "SH",
+  "code": "589400",
+  "name": "科创芯片设计ETF富国",
+  "amount": 70455.0
+ },
+ {
+  "market": "SZ",
+  "code": "159935",
+  "name": "中证500ETF景顺",
+  "amount": 70320.0
+ },
+ {
+  "market": "SH",
+  "code": "511970",
+  "name": "国寿货币ETF",
+  "amount": 70002.0
+ },
+ {
+  "market": "SH",
+  "code": "511600",
+  "name": "华安日日鑫ETF",
+  "amount": 70002.0
+ },
+ {
+  "market": "SZ",
+  "code": "159323",
+  "name": "港股通汽车ETF华夏",
+  "amount": 69116.3984375
+ },
+ {
+  "market": "SZ",
+  "code": "159647",
+  "name": "中药ETF鹏华",
+  "amount": 68997.6015625
+ },
+ {
+  "market": "SH",
+  "code": "561100",
+  "name": "消费电子ETF富国",
+  "amount": 68300.0
+ },
+ {
+  "market": "SZ",
+  "code": "159998",
+  "name": "计算机ETF天弘",
+  "amount": 67949.3984375
+ },
+ {
+  "market": "SZ",
+  "code": "159820",
+  "name": "中证500ETF天弘",
+  "amount": 67819.203125
+ },
+ {
+  "market": "SZ",
+  "code": "159258",
+  "name": "机器人ETF南方",
+  "amount": 66838.203125
+ },
+ {
+  "market": "SZ",
+  "code": "159715",
+  "name": "稀土ETF易方达",
+  "amount": 66776.0
+ },
+ {
+  "market": "SZ",
+  "code": "159834",
+  "name": "金ETF南方",
+  "amount": 66675.0
+ },
+ {
+  "market": "SH",
+  "code": "560710",
+  "name": "船舶ETF富国",
+  "amount": 66314.0
+ },
+ {
+  "market": "SH",
+  "code": "588760",
+  "name": "科创人工智能ETF广发",
+  "amount": 66000.0
+ },
+ {
+  "market": "SH",
+  "code": "588160",
+  "name": "科创新材料ETF南方",
+  "amount": 65736.0
+ },
+ {
+  "market": "SH",
+  "code": "511030",
+  "name": "公司债ETF平安",
+  "amount": 65210.0
+ },
+ {
+  "market": "SZ",
+  "code": "159736",
+  "name": "食品饮料ETF天弘",
+  "amount": 65025.0
+ },
+ {
+  "market": "SH",
+  "code": "516150",
+  "name": "稀土ETF嘉实",
+  "amount": 64960.0
+ },
+ {
+  "market": "SZ",
+  "code": "159148",
+  "name": "石油ETF富国",
+  "amount": 64828.3984375
+ },
+ {
+  "market": "SH",
+  "code": "517110",
+  "name": "创新药ETF国泰",
+  "amount": 64448.0
+ },
+ {
+  "market": "SH",
+  "code": "516880",
+  "name": "光伏ETF银华",
+  "amount": 64444.0
+ },
+ {
+  "market": "SH",
+  "code": "589700",
+  "name": "科创成长ETF南方",
+  "amount": 64306.0
+ },
+ {
+  "market": "SZ",
+  "code": "159690",
+  "name": "有色矿业ETF招商",
+  "amount": 64230.3984375
+ },
+ {
+  "market": "SZ",
+  "code": "159847",
+  "name": "医疗ETF易方达",
+  "amount": 63361.19921875
+ },
+ {
+  "market": "SZ",
+  "code": "159160",
+  "name": "电池ETF东财",
+  "amount": 63099.19921875
+ },
+ {
+  "market": "SZ",
+  "code": "159587",
+  "name": "粮食ETF广发",
+  "amount": 62941.0
+ },
+ {
+  "market": "SH",
+  "code": "513950",
+  "name": "恒生红利ETF富国",
+  "amount": 62650.0
+ },
+ {
+  "market": "SH",
+  "code": "588930",
+  "name": "科创人工智能ETF银华",
+  "amount": 62467.0
+ },
+ {
+  "market": "SH",
+  "code": "515300",
+  "name": "300红利低波ETF嘉实",
+  "amount": 62103.0
+ },
+ {
+  "market": "SH",
+  "code": "516970",
+  "name": "基建ETF广发",
+  "amount": 61405.0
+ },
+ {
+  "market": "SH",
+  "code": "560700",
+  "name": "央企红利ETF广发",
+  "amount": 61195.0
+ },
+ {
+  "market": "SH",
+  "code": "515330",
+  "name": "沪深300ETF天弘",
+  "amount": 61005.0
+ },
+ {
+  "market": "SZ",
+  "code": "159360",
+  "name": "A500ETF天弘",
+  "amount": 58917.6015625
+ },
+ {
+  "market": "SH",
+  "code": "515630",
+  "name": "证券保险ETF鹏华",
+  "amount": 58903.0
+ },
+ {
+  "market": "SZ",
+  "code": "159573",
+  "name": "创业板200ETF华夏",
+  "amount": 58826.0
+ },
+ {
+  "market": "SH",
+  "code": "588150",
+  "name": "科创50ETF南方",
+  "amount": 58604.0
+ },
+ {
+  "market": "SH",
+  "code": "516780",
+  "name": "稀土ETF华泰柏瑞",
+  "amount": 58373.0
+ },
+ {
+  "market": "SH",
+  "code": "513930",
+  "name": "恒生生物科技ETF华泰柏瑞",
+  "amount": 58016.0
+ },
+ {
+  "market": "SH",
+  "code": "517900",
+  "name": "银行AH优选ETF招商",
+  "amount": 56798.0
+ },
+ {
+  "market": "SZ",
+  "code": "159213",
+  "name": "机器人ETF汇添富",
+  "amount": 56352.0
+ },
+ {
+  "market": "SH",
+  "code": "588700",
+  "name": "科创医药ETF嘉实",
+  "amount": 55933.0
+ },
+ {
+  "market": "SH",
+  "code": "511100",
+  "name": "国债ETF华夏",
+  "amount": 55843.0
+ },
+ {
+  "market": "SZ",
+  "code": "159775",
+  "name": "电池ETF建信",
+  "amount": 55732.6015625
+ },
+ {
+  "market": "SH",
+  "code": "589360",
+  "name": "科创50ETF国泰",
+  "amount": 54901.0
+ },
+ {
+  "market": "SH",
+  "code": "562080",
+  "name": "300现金流ETF华宝",
+  "amount": 54625.0
+ },
+ {
+  "market": "SH",
+  "code": "560510",
+  "name": "中证A500ETF泰康",
+  "amount": 54158.0
+ },
+ {
+  "market": "SH",
+  "code": "588100",
+  "name": "科创信息ETF嘉实",
+  "amount": 53778.0
+ },
+ {
+  "market": "SH",
+  "code": "510230",
+  "name": "金融ETF国泰",
+  "amount": 52733.0
+ },
+ {
+  "market": "SZ",
+  "code": "159591",
+  "name": "A50ETF富国",
+  "amount": 52574.8984375
+ },
+ {
+  "market": "SH",
+  "code": "588210",
+  "name": "科创100ETF易方达",
+  "amount": 52336.0
+ },
+ {
+  "market": "SZ",
+  "code": "159029",
+  "name": "有色ETF广发",
+  "amount": 51948.0
+ },
+ {
+  "market": "SH",
+  "code": "561800",
+  "name": "稀有金属ETF华富",
+  "amount": 51438.0
+ },
+ {
+  "market": "SH",
+  "code": "511160",
+  "name": "国债ETF东财",
+  "amount": 51098.0
+ },
+ {
+  "market": "SH",
+  "code": "563530",
+  "name": "卫星ETF易方达",
+  "amount": 50962.0
+ },
+ {
+  "market": "SH",
+  "code": "511670",
+  "name": "华泰天天金ETF",
+  "amount": 50002.0
+ },
+ {
+  "market": "SH",
+  "code": "561330",
+  "name": "矿业ETF国泰",
+  "amount": 49928.0
+ },
+ {
+  "market": "SZ",
+  "code": "159269",
+  "name": "港股通科技ETF南方",
+  "amount": 49628.0
+ },
+ {
+  "market": "SZ",
+  "code": "159315",
+  "name": "黄金股ETF工银",
+  "amount": 49500.0
+ },
+ {
+  "market": "SH",
+  "code": "560930",
+  "name": "电力ETF易方达",
+  "amount": 48984.0
+ }
+]

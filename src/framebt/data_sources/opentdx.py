@@ -1,0 +1,318 @@
+"""opentdx 数仓 Parquet 数据源（数据接入）。
+
+读取 ``opentdx/db/data`` 下的 Parquet K 线（``fakt_kline/{period}/{adjust}/*.parquet``），
+转换为引擎可消费的 ``BarFeed``。这是本框架默认的数据源。
+
+两个关键的数据正确性处理
+------------------------
+
+**1. 按 ``period`` / ``adjust`` 过滤。**
+数仓内同一标的可能同时存在不复权/前复权/后复权多个文件（路径带 ``{period}/{adjust}``，
+行内也有权威的 ``period``/``adjust`` 列）。若不过滤，会把不同复权口径的 Bar 混成
+一条序列，静默污染回测。本实现以**行内列**为准过滤，并按 ``datetime`` 去重保最后。
+
+**2. 对齐 vwap / 市值的复权口径。**
+行情接口的 ``open/high/low/close`` 是**复权后**价格，而 ``amount``/``vol`` 是
+**未复权**原始值，故 ``amount/vol`` 是原始 vwap，与复权 close 不同口径。
+在同时具备 ``adjust=0``（原始）与目标复权口径数据时，本数据源解出复权因子
+``f(t) = raw_close(t) / adj_close(t)``，并据此给出：
+
+    vwap       = (amount / vol) / f(t)          # 与复权价同口径
+    market_cap = raw_close(t) × float_shares    # 真实市值（不受复权影响）
+
+复权因子按标的**前向填充**（仅在除权除息日跳变），避免个别缺失日导致口径漂移。
+
+依赖：pandas + pyarrow（可选依赖 ``data``）。
+"""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+from .base import DataSource
+from ..core.events import Bar
+
+# period / adjust 名称 → 数仓内的整型编码（与 opentdx.const 及 db/config.py 对齐）
+PERIOD_CODE = {
+    "MIN_1": 7, "MIN_5": 0, "MIN_15": 1, "MIN_30": 2, "MIN_60": 3,
+    "DAILY": 4, "WEEKLY": 5, "MONTHLY": 6,
+    "MINS": 8, "DAYS": 9, "QUARTERLY": 10, "YEARLY": 11, "SECONDS": 13,
+}
+ADJUST_CODE = {"NONE": 0, "QFQ": 1, "HFQ": 2}
+
+DEFAULT_PERIOD = "DAILY"
+DEFAULT_ADJUST = "QFQ"   # 前复权是回测首选
+
+
+def default_data_dir() -> Path:
+    """默认数据目录：opentdx 数仓的 data/。"""
+    env = os.environ.get("FRAMEBT_DATA_DIR")
+    if env:
+        return Path(env).expanduser().resolve()
+    here = Path(__file__).resolve()
+    project_root = here.parents[3]  # .../TRADE/framebt
+    return (project_root.parent / "opentdx" / "db" / "data").resolve()
+
+
+def _period_code(period) -> int:
+    if isinstance(period, int):
+        return period
+    p = str(period).upper()
+    if p not in PERIOD_CODE:
+        raise ValueError(f"未知 period {period!r}；可选 {sorted(PERIOD_CODE)}")
+    return PERIOD_CODE[p]
+
+
+def _adjust_code(adjust) -> int:
+    if isinstance(adjust, int):
+        return adjust
+    a = str(adjust).upper()
+    if a not in ADJUST_CODE:
+        raise ValueError(f"未知 adjust {adjust!r}；可选 {sorted(ADJUST_CODE)}")
+    return ADJUST_CODE[a]
+
+
+class OpentdxParquetSource(DataSource):
+    """从 opentdx 数仓 Parquet 读取 K 线。
+
+    用法：
+        src = OpentdxParquetSource()                      # 默认 DAILY + QFQ
+        src = OpentdxParquetSource(adjust="NONE")         # 不复权
+        feed = src.load("SH.600519")
+        feed = src.universe(["SH.600519", "SZ.000001"])
+        src.available_adjusts("SH.600519")                # 该标的可用的复权口径
+    """
+
+    name = "opentdx_parquet"
+
+    # 文件名前缀的市场码 → 市场前缀（opentdx 数仓约定：0=SZ / 1=SH / 2=BJ）。
+    # 文件名形如 ``{market_code}_{code>.parquet``，例如 ``1_600519.parquet`` → ``SH.600519``。
+    _MARKET = {0: "SZ", 1: "SH", 2: "BJ"}
+
+    def __init__(self, data_dir=None, period=DEFAULT_PERIOD, adjust=DEFAULT_ADJUST):
+        self.data_dir = Path(data_dir).expanduser().resolve() if data_dir else default_data_dir()
+        if not self.data_dir.is_dir():
+            raise FileNotFoundError(
+                f"数据目录不存在：{self.data_dir}。"
+                "可通过 FRAMEBT_DATA_DIR 环境变量或 data_dir= 参数指定 opentdx 数仓的 data/ 目录。"
+            )
+        self._kline_root = self.data_dir / "fakt_kline"
+        self.period = _period_code(period)
+        self.adjust = _adjust_code(adjust)
+        # 文件索引：adjust 子目录路径(str) -> {symbol_key -> Path}。
+        # 每个 parquet 文件只含单个标的、单一 (period, adjust) 口径，故可纯靠文件名
+        # 解析出 symbol_key（无需读 pandas），实现「按标的按需读取」而非扫全库。
+        self._file_index: dict[str, dict[str, Path]] = {}
+        # Bar 缓存：(period, adjust, symbol) -> list[Bar]。
+        self._bar_cache: dict[tuple[int, int, str], list[Bar]] = {}
+
+    def _adjust_dir(self, period: int, adjust: int) -> Path:
+        """``fakt_kline/{period}/{adjust}`` 子目录（每个 parquet 落在其中）。"""
+        return self._kline_root / str(period) / str(adjust)
+
+    def _build_index(self, period: int, adjust: int) -> dict[str, Path]:
+        """解析文件名建 ``symbol_key -> 文件路径`` 索引（纯字符串，不读 pandas）。
+
+        索引按 adjust 子目录缓存；首次构建后秒回。文件名 ``{market_code}_{code>.parquet``
+        中的市场码与代码即可唯一还原 ``symbol_key``（见 ``_MARKET``）。
+        """
+        adj_dir = self._adjust_dir(period, adjust)
+        idx = self._file_index.get(str(adj_dir))
+        if idx is not None:
+            return idx
+        idx = {}
+        if adj_dir.is_dir():
+            for name in adj_dir.glob("*.parquet"):
+                stem = name.stem  # 如 "1_600519"
+                if "_" not in stem:
+                    continue
+                lead, code = stem.split("_", 1)
+                try:
+                    market = self._MARKET[int(lead)]
+                except ValueError:
+                    continue
+                idx[f"{market}.{code}"] = name
+        self._file_index[str(adj_dir)] = idx
+        return idx
+
+    @property
+    def all_files(self) -> list[Path]:
+        """所有 parquet 文件路径（兼容旧代码对 ``src._files`` 的引用）。"""
+        files: list[Path] = []
+        for idx in self._file_index.values():
+            files.extend(idx.values())
+        return files
+
+    # ---- 单文件读取 ----
+
+    def _read_df(self, path: Path) -> "object":
+        """读取单个 parquet 文件，按 ``datetime`` 去重保最后、升序排列（未转 Bar）。
+
+        每个文件只含单一标的、单一 ``(period, adjust)`` 口径（已由文件名/目录保证），
+        故无需按 symbol 分组、无需再按列过滤口径——直接读整文件即可。
+        """
+        import pandas as pd
+
+        df = pd.read_parquet(path)
+        if df.empty or "datetime" not in df.columns:
+            return df
+        merged = df.drop_duplicates(subset=["datetime"], keep="last")
+        return merged.sort_values("datetime").reset_index(drop=True)
+
+    @staticmethod
+    def _raw_close_map(df) -> dict:
+        """{ordinal: 原始收盘价}，用于解复权因子。"""
+        import pandas as pd
+
+        if df is None or df.empty:
+            return {}
+        out = {}
+        for _, row in df.iterrows():
+            try:
+                out[int(pd.Timestamp(row["dt"]).toordinal())] = float(row["close"])
+            except Exception:  # noqa: BLE001
+                continue
+        return out
+
+    @staticmethod
+    def _forward_fill_factor(raw_map: dict, timestamps: list[int]) -> dict:
+        """把复权因子按时间前向填充到每个时间戳。
+
+        因子 f = raw_close / adj_close，仅在除权除息日跳变；用最近一次已知值填充
+        缺失日，避免口径漂移。
+        """
+        if not raw_map:
+            return {}
+        known = sorted(raw_map)
+        out = {}
+        j = 0
+        last = None
+        for ts in timestamps:
+            while j < len(known) and known[j] <= ts:
+                last = raw_map[known[j]]
+                j += 1
+            if last is not None:
+                out[ts] = last
+        return out
+
+    def _to_bars(self, df, raw_close: dict) -> list[Bar]:
+        import pandas as pd
+
+        bars: list[Bar] = []
+        for _, row in df.iterrows():
+            try:
+                ordinal = int(pd.Timestamp(row["dt"]).toordinal())
+            except Exception:  # noqa: BLE001
+                continue
+            close = float(row["close"])
+            vol = float(row.get("vol", 0.0) or 0.0)
+            amount = float(row.get("amount", 0.0) or 0.0)
+            fsh = float(row.get("float_shares", 0.0) or 0.0)
+            turn = float(row.get("turnover", 0.0) or 0.0)
+
+            rc = raw_close.get(ordinal)
+            # 复权因子：原始价 / 复权价（rc 缺失时视为 1，即不复权）
+            factor = (rc / close) if (rc and close > 0) else 1.0
+            if not (factor > 0) or factor != factor:
+                factor = 1.0
+
+            # vwap 对齐到复权口径
+            vwap = (amount / vol) / factor if vol > 0 else close
+            # 真实市值：原始价 × 流通股本
+            if rc and fsh > 0:
+                market_cap = rc * fsh
+            elif fsh > 0:
+                market_cap = close * fsh * factor
+
+            bars.append(
+                Bar(
+                    timestamp=ordinal,
+                    symbol=str(row["symbol_key"]),
+                    open=float(row["open"]),
+                    high=float(row["high"]),
+                    low=float(row["low"]),
+                    close=close,
+                    volume=vol,
+                    amount=amount,
+                    float_shares=fsh,
+                    turnover=turn,
+                    vwap=float(vwap),
+                    market_cap=float(market_cap) if fsh > 0 else 0.0,
+                )
+            )
+        return bars
+
+    def _bars_for(self, symbol: str, period: int, adjust: int) -> list[Bar]:
+        """读取单个标的的 Bar（口径已对齐、按 datetime 去重），并按 (period, adjust, symbol) 缓存。
+
+        仅读取该标的的两个文件（目标口径 + 不复权口径，后者用于解复权因子），
+        不再扫全库。缺失标的返回空列表（由 ``load`` 抛 ``KeyError``）。
+        """
+        cached = self._bar_cache.get((period, adjust, symbol))
+        if cached is not None:
+            return cached
+
+        idx = self._build_index(period, adjust)
+        path = idx.get(symbol)
+        if path is None:
+            bars: list[Bar] = []
+        else:
+            df = self._read_df(path)
+            # 原始（不复权）收盘价，用于解复权因子（仅非 NONE 口径需要）
+            raw_map: dict = {}
+            if adjust != ADJUST_CODE["NONE"]:
+                none_path = self._build_index(period, ADJUST_CODE["NONE"]).get(symbol)
+                if none_path is not None:
+                    raw_map = self._raw_close_map(self._read_df(none_path))
+            bars = self._to_bars(df, raw_map)
+
+        self._bar_cache[(period, adjust, symbol)] = bars
+        return bars
+
+    def available_symbols(self, period=None, adjust=None) -> list[str]:
+        """返回该口径下所有标的（纯解析文件名，不读任何 parquet）。"""
+        p = period if period is not None else self.period
+        a = adjust if adjust is not None else self.adjust
+        if not isinstance(p, int):
+            p = _period_code(p)
+        if not isinstance(a, int):
+            a = _adjust_code(a)
+        return sorted(self._build_index(p, a).keys())
+
+    def available_adjusts(self, symbol: str) -> list[str]:
+        """返回该标的在数仓中实际存在的复权口径（纯解析文件名，不读 parquet）。"""
+        found: set[int] = set()
+        for code in ADJUST_CODE.values():
+            if symbol in self._build_index(self.period, code):
+                found.add(code)
+        inv = {v: k for k, v in ADJUST_CODE.items()}
+        return sorted(inv.get(a, str(a)) for a in found)
+
+    def load(self, symbol, start=None, end=None, period=None, adjust=None, **params) -> "BarFeed":
+        from ..feed import BarFeed
+
+        p = period if period is not None else self.period
+        a = adjust if adjust is not None else self.adjust
+        if not isinstance(p, int) or not isinstance(a, int):
+            p, a = _period_code(p), _adjust_code(a)
+
+        if symbol not in self._build_index(p, a):
+            raise KeyError(
+                f"数据源中无标的 {symbol}（period={p}, adjust={a}）。"
+                f"可用标的：{sorted(self._build_index(p, a))}"
+            )
+        bars = self._bars_for(symbol, p, a)
+        return BarFeed(self._filter(bars, start, end))
+
+    @staticmethod
+    def _filter(bars, start, end):
+        import pandas as pd
+
+        if start is not None:
+            start_ord = pd.Timestamp(start).toordinal() if not isinstance(start, int) else start
+            bars = [b for b in bars if b.timestamp >= start_ord]
+        if end is not None:
+            end_ord = pd.Timestamp(end).toordinal() if not isinstance(end, int) else end
+            bars = [b for b in bars if b.timestamp <= end_ord]
+        return bars
