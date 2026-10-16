@@ -11,16 +11,16 @@
 行内也有权威的 ``period``/``adjust`` 列）。若不过滤，会把不同复权口径的 Bar 混成
 一条序列，静默污染回测。本实现以**行内列**为准过滤，并按 ``datetime`` 去重保最后。
 
-**2. 对齐 vwap / 市值的复权口径。**
-行情接口的 ``open/high/low/close`` 是**复权后**价格，而 ``amount``/``vol`` 是
-**未复权**原始值，故 ``amount/vol`` 是原始 vwap，与复权 close 不同口径。
-在同时具备 ``adjust=0``（原始）与目标复权口径数据时，本数据源解出复权因子
-``f(t) = raw_close(t) / adj_close(t)``，并据此给出：
+**2. vwap / 市值的口径。**
+``open/high/low/close`` 是**复权后**价格；``amount``/``vol`` 是**未复权**原始
+成交值，故 ``amount/vol`` 就是真实成交均价（原始 vwap）。本数据源统一采用：
 
-    vwap       = (amount / vol) / f(t)          # 与复权价同口径
-    market_cap = raw_close(t) × float_shares    # 真实市值（不受复权影响）
+    vwap       = amount / vol                   # 真实 vwap（全市场一致）
+    market_cap = close × float_shares           # 与复权 close 同口径
 
-复权因子按标的**前向填充**（仅在除权除息日跳变），避免个别缺失日导致口径漂移。
+不额外解复权因子把 vwap 拉到复权价同口径：原始 twin 仅占全市场约 0.5%，
+按因子兜底会让 twin/非 twin 的 vwap/mcap 口径分裂，横截面因子混入「数据可用性」
+信号；原始 vwap 已是真实成交均价，且与 ``Panel.from_feed`` 的兜底同源。
 
 依赖：pandas + pyarrow（可选依赖 ``data``）。
 """
@@ -160,43 +160,18 @@ class OpentdxParquetSource(DataSource):
         merged = df.drop_duplicates(subset=["datetime"], keep="last")
         return merged.sort_values("datetime").reset_index(drop=True)
 
-    @staticmethod
-    def _raw_close_map(df) -> dict:
-        """{ordinal: 原始收盘价}，用于解复权因子。"""
-        import pandas as pd
+    def _to_bars(self, df) -> list[Bar]:
+        """把单文件的行转成 Bar。
 
-        if df is None or df.empty:
-            return {}
-        out = {}
-        for _, row in df.iterrows():
-            try:
-                out[int(pd.Timestamp(row["dt"]).toordinal())] = float(row["close"])
-            except Exception:  # noqa: BLE001
-                continue
-        return out
+        口径全市场统一（**不依赖原始 twin**）：
+          - ``vwap = amount / vol``：原始成交均价（真实 vwap），与 ``Panel.from_feed``
+            的兜底同源，且无需 raw 数据即可算；
+          - ``market_cap = close × float_shares``：与（复权）close 同口径。
 
-    @staticmethod
-    def _forward_fill_factor(raw_map: dict, timestamps: list[int]) -> dict:
-        """把复权因子按时间前向填充到每个时间戳。
-
-        因子 f = raw_close / adj_close，仅在除权除息日跳变；用最近一次已知值填充
-        缺失日，避免口径漂移。
+        不再解复权因子把 vwap 拉到复权价同口径。原始 twin 仅占全市场约 0.5%
+        （QFQ-only 占 99.5%），按因子兜底会让 twin/非 twin 的 vwap/mcap 口径分裂，
+        横截面因子混入「数据可用性」信号；原始 vwap 已是真实成交均价，全市场一致更优。
         """
-        if not raw_map:
-            return {}
-        known = sorted(raw_map)
-        out = {}
-        j = 0
-        last = None
-        for ts in timestamps:
-            while j < len(known) and known[j] <= ts:
-                last = raw_map[known[j]]
-                j += 1
-            if last is not None:
-                out[ts] = last
-        return out
-
-    def _to_bars(self, df, raw_close: dict) -> list[Bar]:
         import pandas as pd
 
         bars: list[Bar] = []
@@ -211,19 +186,8 @@ class OpentdxParquetSource(DataSource):
             fsh = float(row.get("float_shares", 0.0) or 0.0)
             turn = float(row.get("turnover", 0.0) or 0.0)
 
-            rc = raw_close.get(ordinal)
-            # 复权因子：原始价 / 复权价（rc 缺失时视为 1，即不复权）
-            factor = (rc / close) if (rc and close > 0) else 1.0
-            if not (factor > 0) or factor != factor:
-                factor = 1.0
-
-            # vwap 对齐到复权口径
-            vwap = (amount / vol) / factor if vol > 0 else close
-            # 真实市值：原始价 × 流通股本
-            if rc and fsh > 0:
-                market_cap = rc * fsh
-            elif fsh > 0:
-                market_cap = close * fsh * factor
+            vwap = (amount / vol) if vol > 0 else close
+            market_cap = close * fsh if fsh > 0 else 0.0
 
             bars.append(
                 Bar(
@@ -238,16 +202,16 @@ class OpentdxParquetSource(DataSource):
                     float_shares=fsh,
                     turnover=turn,
                     vwap=float(vwap),
-                    market_cap=float(market_cap) if fsh > 0 else 0.0,
+                    market_cap=float(market_cap),
                 )
             )
         return bars
 
     def _bars_for(self, symbol: str, period: int, adjust: int) -> list[Bar]:
-        """读取单个标的的 Bar（口径已对齐、按 datetime 去重），并按 (period, adjust, symbol) 缓存。
+        """读取单个标的的 Bar（按 datetime 去重），并按 (period, adjust, symbol) 缓存。
 
-        仅读取该标的的两个文件（目标口径 + 不复权口径，后者用于解复权因子），
-        不再扫全库。缺失标的返回空列表（由 ``load`` 抛 ``KeyError``）。
+        只读该标的**一个**文件（目标口径）——vwap/mcap 口径已全市场统一，不再需要
+        原始 twin。缺标的返回空列表（由 ``load`` 抛 ``KeyError``）。
         """
         cached = self._bar_cache.get((period, adjust, symbol))
         if cached is not None:
@@ -258,14 +222,7 @@ class OpentdxParquetSource(DataSource):
         if path is None:
             bars: list[Bar] = []
         else:
-            df = self._read_df(path)
-            # 原始（不复权）收盘价，用于解复权因子（仅非 NONE 口径需要）
-            raw_map: dict = {}
-            if adjust != ADJUST_CODE["NONE"]:
-                none_path = self._build_index(period, ADJUST_CODE["NONE"]).get(symbol)
-                if none_path is not None:
-                    raw_map = self._raw_close_map(self._read_df(none_path))
-            bars = self._to_bars(df, raw_map)
+            bars = self._to_bars(self._read_df(path))
 
         self._bar_cache[(period, adjust, symbol)] = bars
         return bars

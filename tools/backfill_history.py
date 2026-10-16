@@ -41,8 +41,11 @@ import persist as tdx_persist                                  # noqa: E402  (op
 
 PAGE = 700          # 单次请求安全上限（800 命中协议边界，返回错乱区间）
 
-# 验证池：2015 年前上市、流动性好的 A 股大盘股，覆盖多个行业。
-# 选样目的：让横截面因子有足够截面宽度，且历史足够长以产生有意义的回测区间。
+# 冒烟样例：仅用于快速验证回填链路（20 只，秒级完成）。
+# ⚠️ 这是「冒烟测试」，不是验证池、更不是「全市场」。opentdx 数仓现成已有
+# 5500+ 只 QFQ 日线（见 OpentdxParquetSource.available_symbols()），框架校验默认
+# 加载全市场而非此子集。回填工具只用于「补齐数仓里还没有的新标的」，不要把它当成
+# 定义验证样本的入口——那样会引入幸存者偏差（以下全是 2015 年前上市且至今存续的大盘股）。
 DEFAULT_UNIVERSE = [
     ("SH", "600519"),  # 贵州茅台
     ("SH", "600036"),  # 招商银行
@@ -105,7 +108,7 @@ def fetch_paged(client: TdxClient, market, code: str, max_bars: int, adjust) -> 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="回填 opentdx 数仓日线历史（分页）")
-    ap.add_argument("--symbols", default=None, help="'SH 600519, SZ 000001'（默认验证池）")
+    ap.add_argument("--symbols", default=None, help="'SH 600519, SZ 000001'（默认仅 20 只冒烟样例，非验证池）")
     ap.add_argument("--max-bars", type=int, default=2000, help="每标的最多 K 线数（默认 2000≈8年）")
     ap.add_argument("--adjust", type=int, default=int(ADJUST.QFQ.value), help="0 不权/1 前复权/2 后复权")
     args = ap.parse_args()

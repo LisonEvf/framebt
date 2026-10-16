@@ -93,7 +93,7 @@ opentdx 的 `db/etl.py` 以 `count=800` 单次拉取，但实测该值命中协�
 复用 opentdx 自有的 `db/persist.py` 写库（schema 与 merge 语义完全一致，不改动 opentdx 源码）：
 
 ```bash
-python tools/backfill_history.py                  # 默认验证池 24 标的，每标的 2000 根（≈8 年）
+python tools/backfill_history.py                  # 默认 20 只冒烟样例（非验证池，秒级）；全市场 5500+ 标的见 available_symbols()
 python tools/backfill_history.py --max-bars 3000  # ≈12 年
 python tools/backfill_history.py --symbols "SH 600519, SZ 000001"
 ```

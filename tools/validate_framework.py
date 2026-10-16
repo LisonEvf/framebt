@@ -1,4 +1,4 @@
-"""框架能力验证：用真实 opentdx 数仓数据（24 标的 × 2000 日线）逐项检验。
+"""框架能力验证：用真实 opentdx 数仓数据（默认全市场 5500+ 标的 × DAILY/QFQ）逐项检验。
 
 不是「跑个策略看收益」，而是逐条检验设计文档承诺的机制是否**在真实数据上成立**：
 
@@ -465,7 +465,7 @@ def check_signal_transmission(src: OpentdxParquetSource, syms: list[str]) -> Non
 
 
 def check_strategies(src: OpentdxParquetSource, syms: list[str]) -> None:
-    hr("6. 真实策略表现（24 标的 × 2000 日线，含 A 股成本）")
+    hr(f"6. 真实策略表现（全市场 {len(syms)} 标的 × DAILY/QFQ，含 A 股成本）")
 
     cost = StandardCost(commission=0.0003, min_commission=5.0,
                         stamp_tax=0.001, transfer_fee=0.00002, slippage="volume_based", k=0.001)
