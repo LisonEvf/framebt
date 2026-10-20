@@ -11,6 +11,10 @@
 用法：
     python tools/validate_adaptive.py
     python tools/validate_adaptive.py --train 800 --top-k 5 --md reports/ADAPTIVE.md
+
+注意：OOS 回测每帧对截面矩阵做 numpy 矩阵运算，本机 OpenBLAS 多线程在较大
+截面（~500 标）上会触发访问越界崩溃（0xC0000005）。如遇崩溃，先在外部设
+置单线程再跑：$env:OMP_NUM_THREADS="1"（macOS/Linux 为 export OMP_NUM_THREADS=1）。
 """
 
 from __future__ import annotations
@@ -96,6 +100,10 @@ def main() -> None:
                     help="消融：固定等权因子权重，旁路在线GD/健康降权/生命周期/门控")
     ap.add_argument("--symbols", default=None,
                     help="限定标的代码（逗号分隔），在读取前按文件名过滤，避免加载全市场")
+    ap.add_argument("--max-symbols", type=int, default=None,
+                    help="因子池与样本外回测用的代表样本上限（缺省=全市场）。"
+                         "全市场 5575 标的的 57 因子池计算约 30min，"
+                         "降采样可大幅提速且统计量稳定。")
     args = ap.parse_args()
 
     t_start = time.time()
@@ -107,6 +115,11 @@ def main() -> None:
         # 不再需要过滤 src._files 预读。symbol_key 形如 SH.600519，取点后缀匹配代码。
         syms = [s for s in syms if any(c == s.split(".")[-1] or c == s for c in codes)]
         out(f"  [限定标的] {len(codes)} 个代码 → 匹配 {len(syms)} 个标的")
+    if args.max_symbols:
+        # 真正截断：因子池与样本外回测用代表样本（否则仍是全市场 5575，57 因子池 ~30min）。
+        if len(syms) > args.max_symbols:
+            out(f"  [--max-symbols] {len(syms)} → {args.max_symbols} 标代表样本")
+        syms = syms[:args.max_symbols]
     feed_full = src.universe(syms)
     panel = Panel.from_feed(feed_full)
     names = list_factors()

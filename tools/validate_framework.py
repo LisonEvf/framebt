@@ -18,11 +18,13 @@
 from __future__ import annotations
 
 import argparse
+import sys
 import time
 from pathlib import Path
 
 from framebt import (
     CausalityViolation,
+    DetermRNG,
     Engine,
     FrameStrategy,
     Ledger,
@@ -41,6 +43,13 @@ from framebt.data_sources import OpentdxParquetSource
 from framebt.strategies import DualMAStrategy, MomentumCrossSection
 
 LINES: list[str] = []
+
+# Windows 中文控制台默认 GBK，输出「✓」会 UnicodeEncodeError 并中断（--md 也写不出来）。
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def out(s: str = "") -> None:
@@ -361,7 +370,9 @@ class RankStrategy(FrameStrategy):
         self.top_k = top_k
         self.mode = mode
         self.lookback = lookback
-        self._rng = __import__("random").Random(42)   # 固定种子，保证 I3
+        # 用宿主同款确定性 RNG，而不是标准库 random（README/宿主规则要求策略
+        # 不得使用 random，否则跨解释器/版本的序列不保证一致）。
+        self._rng = DetermRNG(seed=42)
         self._reg = False
 
     def _ensure(self, bus) -> None:
@@ -379,6 +390,10 @@ class RankStrategy(FrameStrategy):
         self._reg = True
 
     def on_frame(self, frame, token, bus, host):
+        # 有在途单就先等它落地：否则本帧按「当前现金」下的买单会与上一帧尚未
+        # 成交的买单叠加，成交后现金变负（隐含杠杆）。这是 I2 延迟下的基本约束。
+        if host.pending_orders():
+            return []
         self._ensure(bus)
         rows = bus.cross_section("mom", self.universe, token=token, lag=1)
         names = [s for s, r in rows.items() if r.is_valid]
@@ -387,7 +402,7 @@ class RankStrategy(FrameStrategy):
         elif self.mode == "reversal":
             names.sort(key=lambda s: rows[s].value)
         else:
-            self._rng.shuffle(names)
+            names = self._rng.shuffle(names)
         target = set(names[: self.top_k])
         if not target:
             return []
@@ -396,10 +411,12 @@ class RankStrategy(FrameStrategy):
         actual = {s: n for s, n in pos.exposure().items() if n > 0}
         orders: list = []
         for sym, size in actual.items():
-            if sym not in target:
+            # I2 延迟下，卖出腿在成交前仍会出现在持仓里；已有在途单就不再重复下。
+            if sym not in target and not host.has_pending(sym):
                 orders.append(Order(side=OrderSide.SELL, symbol=sym, size=size,
                                     order_type=OrderType.MARKET))
-        to_buy = [s for s in names[: self.top_k] if actual.get(s, 0) <= 0]
+        to_buy = [s for s in names[: self.top_k]
+                  if actual.get(s, 0) <= 0 and not host.has_pending(s)]
         if to_buy:
             per = pos.cash / len(to_buy)
             if per > 0:
@@ -409,23 +426,51 @@ class RankStrategy(FrameStrategy):
         return orders
 
 
-def check_signal_transmission(src: OpentdxParquetSource, syms: list[str]) -> None:
-    """信号传导对照实验：框架必须忠实把「信号」翻译成「盈亏」。"""
-    hr("6d. 信号传导对照实验（同一套代码，只翻转排序方向）")
-    feed = src.universe(syms)
-    out(f"    {'排序模式':<12}{'收益':>12}{'回撤':>10}{'交易数':>9}{'期末权益':>15}")
+def cash_path(fills, initial_cash: float) -> tuple[float, float]:
+    """由成交明细独立重算「期末现金 / 期间最低现金」。
+
+    默认 ``NoOpRisk`` 不会拦超买；若出现负现金，说明策略重复下单或有隐式杠杆，
+    该对照实验的收益量级不可解释。返回 ``(final_cash, min_cash)``。
+    """
+    cash = initial_cash
+    min_cash = initial_cash
+    for f in sorted(fills, key=lambda x: (x.frame_id, x.order_id)):
+        if f.side in (OrderSide.SELL, OrderSide.SELL_SHORT):
+            cash += f.size * f.price - f.cost
+        else:
+            cash -= f.size * f.price + f.cost
+        min_cash = min(min_cash, cash)
+    return cash, min_cash
+
+
+def check_signal_transmission(src: OpentdxParquetSource,
+                              syms: list[str],
+                              scan_syms: list[str] | None = None) -> None:
+    """信号对照实验：框架必须忠实把「信号」翻译成「盈亏」。"""
+    scan = scan_syms if scan_syms is not None else syms
+    scan_note = ("（--max-symbols 降采样：{n} 标代表样本）".format(n=len(scan))
+                 if scan_syms is not None and scan_syms != syms else "")
+    hr(f"6d. 信号传导对照实验（同一套代码，只翻转排序方向）{scan_note}")
+    feed = src.universe(scan)
+    out(f"    {'排序模式':<12}{'收益':>12}{'回撤':>10}{'交易数':>9}"
+        f"{'期末权益':>15}{'期末现金':>14}{'最低现金':>14}")
     results = {}
+    min_cashes = {}
     for mode in ("momentum", "reversal", "random"):
-        eng = Engine(feed, RankStrategy(syms, 3, mode), initial_cash=1_000_000.0)
+        # universe 必须与 feed 一致，否则每帧对全市场 5000+ 标的做横截面（O(n) 爆炸）。
+        eng = Engine(feed, RankStrategy(scan, 3, mode), initial_cash=1_000_000.0)
         r = eng.run()
         p = Performance(r)
+        final_cash, min_cash = cash_path(r.fills, 1_000_000.0)
         results[mode] = p.total_return
+        min_cashes[mode] = min_cash
         out(f"    {mode:<12}{p.total_return:>12.2%}{p.max_drawdown:>10.2%}"
-            f"{r.total_trades():>9d}{r.final_equity():>15,.0f}")
+            f"{r.total_trades():>9d}{r.final_equity():>15,.0f}"
+            f"{final_cash:>14,.0f}{min_cash:>14,.0f}")
 
     # 基准
     bh = []
-    for s in syms:
+    for s in scan:
         b = src.load(s).bars
         if len(b) > 80:
             bh.append(b[-1].close / b[60].close - 1)
@@ -434,7 +479,7 @@ def check_signal_transmission(src: OpentdxParquetSource, syms: list[str]) -> Non
 
     # --- 不依赖框架的纯统计检验：60 日动量 → 未来 20 日收益 ---
     pairs = []
-    for s in syms:
+    for s in scan:
         closes = [b.close for b in src.load(s).bars]
         for i in range(60, len(closes) - 20, 20):
             pairs.append((closes[i] / closes[i - 60] - 1, closes[i + 20] / closes[i] - 1))
@@ -456,15 +501,22 @@ def check_signal_transmission(src: OpentdxParquetSource, syms: list[str]) -> Non
         out(f"      动量最低 20%  : 未来 20 日 {bot:+.2%}")
 
     out("")
-    ok = results["reversal"] > results["random"] and results["reversal"] > results["momentum"]
-    out(f"    结论：翻转排序后结果显著反转 "
-        f"({'✓ 框架忠实传导信号' if ok else '✗ 传导异常'}）")
-    out("    说明：本样本期内 60 日动量在 A 股大盘股上呈**反转**特征，"
-        "因此顺势组合亏损、逆势组合盈利；")
-    out("          随机组合亏损则来自日频换手 + 次帧开盘成交的逆向选择，属预期摩擦。")
+    negative = [m for m, c in min_cashes.items() if c < -1e-6]
+    if negative:
+        out(f"    ✗ 实验无效：{', '.join(negative)} 出现负现金（最低 "
+            f"{min(min_cashes.values()):,.0f}）——策略重复下单/默认无风控，"
+            "收益量级不可解释，不能作为能力证据。")
+    else:
+        ok = (results["reversal"] > results["random"]
+              and results["reversal"] > results["momentum"])
+        out(f"    结论：三组均无负现金；翻转排序后结果"
+            f"{'反转' if ok else '未反转'}（{'✓' if ok else '✗'} 方向对照）")
+        out("    说明：方向反转只说明排序信号在本样本期有效，不构成收益能力证明；"
+            "具体盈亏见上表，不预设随机组合的正负。")
 
 
-def check_strategies(src: OpentdxParquetSource, syms: list[str]) -> None:
+def check_strategies(src: OpentdxParquetSource, syms: list[str],
+                     scan_syms: list[str] | None = None) -> None:
     hr(f"6. 真实策略表现（全市场 {len(syms)} 标的 × DAILY/QFQ，含 A 股成本）")
 
     cost = StandardCost(commission=0.0003, min_commission=5.0,
@@ -484,12 +536,17 @@ def check_strategies(src: OpentdxParquetSource, syms: list[str]) -> None:
     out(f"          任何策略都要与这个「什么都不做」的基准比较才有意义。")
 
     # --- 6b. 双均线参数扫描（逐标的）---
+    # 6b 是 O(标的数 × 参数) 的扫描：全市场 5575×3 ≈ 16725 次回测约 1-3h，
+    # 故在 --max-symbols 存在时改用代表样本逐标独立回测（结果统计量稳定）。
+    scan_note = ("（--max-symbols 降采样：{n} 标代表样本，避免 O(n) 扫描过慢）".format(n=len(scan_syms if scan_syms is not None else syms))
+                 if scan_syms is not None and scan_syms != syms else "")
     out("")
-    out("6b. 双均线参数扫描（逐标的独立回测，A 股成本 + T+1）")
+    out(f"6b. 双均线参数扫描（逐标的独立回测，A 股成本 + T+1）{scan_note}")
     out(f"    {'窗口':<14}{'平均收益':>11}{'中位收益':>11}{'平均回撤':>11}{'平均交易':>10}{'胜率':>8}{'vs基准':>10}")
+    scan = scan_syms if scan_syms is not None else syms
     for short, long in [(5, 20), (10, 30), (20, 60)]:
         rets, mdds, trades, wins = [], [], [], []
-        for s in syms:
+        for s in scan:
             feed = src.load(s)
             eng = Engine(feed, DualMAStrategy(s, short, long), initial_cash=1_000_000.0,
                          settlement_cycle=1, cost_model=cost, rules=StandardAshareRules())
@@ -509,12 +566,12 @@ def check_strategies(src: OpentdxParquetSource, syms: list[str]) -> None:
 
     # --- 6c. 横截面动量（框架的差异化能力）---
     out("")
-    out("6c. 横截面动量选股（cross_section + lag=1，框架差异化能力）")
-    feed = src.universe(syms)
+    out(f"6c. 横截面动量选股（cross_section + lag=1，框架差异化能力）{scan_note}")
+    feed = src.universe(scan)
     bars = to_bars(feed)
     out(f"    {'TopK':<6}{'收益':>12}{'年化':>12}{'回撤':>12}{'Sharpe':>10}{'交易数':>8}{'成本':>12}")
     for top_k in (3, 5, 8):
-        r = run_backtest(bars, MomentumCrossSection(syms, 20, 60, top_k),
+        r = run_backtest(bars, MomentumCrossSection(scan, 20, 60, top_k),
                          symbol="P", initial_cash=1_000_000.0,
                          settlement_cycle=1, cost_model=cost, rules=StandardAshareRules())
         p = Performance(r)
@@ -557,6 +614,10 @@ def main() -> None:
     ap = argparse.ArgumentParser(description="framebt 框架能力验证")
     ap.add_argument("--md", default=None, help="同时写出 Markdown 报告路径")
     ap.add_argument("--skip-sweep", action="store_true", help="跳过多参数扫描（更快）")
+    ap.add_argument("--max-symbols", type=int, default=None,
+                    help="扫描/横截面类检查（6b 扫描、6c、6d 信号传导）使用的代表样本"
+                         "上限；缺省=全市场。核心检查（数据完整性/因果/A股规则/成本/"
+                         "确定性/吞吐/6a 基准）始终用全市场，保证全量可加载。")
     args = ap.parse_args()
 
     src = OpentdxParquetSource()
@@ -564,16 +625,23 @@ def main() -> None:
     if not syms:
         raise SystemExit("数据源无数据；请先运行 tools/backfill_history.py")
 
+    scan_syms = syms[:args.max_symbols] if args.max_symbols else None
+    if args.skip_sweep and not args.max_symbols:
+        scan_syms = syms[:50]  # 跳过扫描：仅用极小样本过一遍 6b/6c/6d
+    scan_label = (f"{args.max_symbols} 标代表样本" if args.max_symbols
+                  else "50 标（--skip-sweep）" if args.skip_sweep else "全市场")
+
     out("framebt 框架能力验证报告")
     out(f"数据源: opentdx 数仓 · {len(syms)} 标的 · DAILY/QFQ")
+    out(f"扫描项样本: {scan_label}（--max-symbols；核心项仍用全市场 {len(syms)} 标）")
 
     check_data(src, syms)
     check_causality(src, syms[0])
     check_determinism(src, syms)
     check_rules(src, syms)
     check_cost(src, syms[0])
-    check_strategies(src, syms)
-    check_signal_transmission(src, syms)
+    check_strategies(src, syms, scan_syms)
+    check_signal_transmission(src, syms, scan_syms)
     check_throughput(src, syms)
 
     if args.md:
