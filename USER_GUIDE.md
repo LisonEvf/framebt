@@ -89,10 +89,10 @@ framebt 的全部设计从三条公理推出（详见 `src/framebt/__init__.py` 
 | **I2** | 帧 t 生成的订单，最早成交于帧 t+delay（延迟管线） |
 | **I3** | 相同配置（数据/参数/种子/Δt 序列）逐位可复现 |
 | **I4** | 帧内多 Bar 按 `(timestamp, sequence_id)` 严格排序 |
-| **I5** | 策略无法访问/改写已过去帧与未来帧 |
+| **I5** | 策略无法通过公开 API 改写已过去帧/篡改权威时间（私有属性不设防） |
 
-> 这不是文档里的口号。`tests/` 有 **246 个测试**逐项校验它们，
-> 真实数据验证里 I1 做了 **2000 次「伪造未来 token」攻击，0 次逃逸**。
+> 这不是文档里的口号。`tests/` 有 **429 个测试**逐项校验它们，
+> 真实数据验证里 I1 做了 **1,406 次「伪造未来 token」攻击，0 次逃逸**。
 
 ---
 
@@ -100,14 +100,17 @@ framebt 的全部设计从三条公理推出（详见 `src/framebt/__init__.py` 
 
 ### 4.1 安装
 
-核心引擎**零第三方依赖（纯标准库）**，保证 I3 逐位复现与可移植性；
-只有读取 opentdx 数仓 Parquet 时才需要 `pandas + pyarrow`。
+核心引擎（Engine / DataBus / Ledger / Rules / Cost / Execution / Feed）**零第三方依赖
+（纯标准库）**，`import framebt` 也不会触发第三方导入；读取 opentdx 数仓 Parquet 需要
+`pandas + pyarrow`，生成 HTML 图表报告需要 `matplotlib`。
 
 ```bash
 cd framebt
-pip install -e .              # 仅核心引擎
-pip install -e ".[data,dev]"  # + 数据源 + 测试
-python --version              # 需要 >= 3.12
+pip install -e .                 # 核心（零第三方依赖）
+pip install -e ".[data,dev]"     # + 数据源 + 测试
+pip install -e ".[report]"       # + 图表报告
+pip install -e ".[all]"          # 一把梭
+python --version                 # 需要 >= 3.12
 ```
 
 数据源默认指向 `../opentdx/db/data`，可用环境变量 `FRAMEBT_DATA_DIR` 或 `data_dir=` 参数覆盖。
@@ -176,18 +179,68 @@ result = engine.run()
 ### 4.6 运行内置示例
 
 ```bash
-python examples/dual_ma_real.py          # 真实数据双均线
-python examples/multi_factor_universe.py # 横截面动量选股
-python examples/conditional_stop_loss.py # 趋势 + 止损条件单
-python examples/bracket_oco.py           # 入场 + OCO 止盈止损
+python examples/demo_quickstart.py                 # 快速上手：回测 + 图表化报告（无需外部数据）
+python examples/dual_ma_real.py                    # 真实数据双均线
+python examples/multi_factor_universe.py           # 横截面动量选股
+python examples/conditional_stop_loss.py           # 趋势 + 止损条件单
+python examples/bracket_oco.py                     # 入场 + OCO 止盈止损
 ```
+
+`demo_quickstart.py` 无需任何外部数据即可运行（找不到 opentdx 数仓时自动合成日 K 线），
+跑完会在 `reports/demo_quickstart.html` 生成一张自包含的图表化报告。
 
 ### 4.7 运行测试
 
 ```bash
-python -m pytest                              # 246 passed
+python -m pytest                              # 422 passed, 7 xfailed（共 429）
 python -m pytest tests/test_invariants.py -v  # 只看不变式 I1–I5
-python tools/validate_framework.py            # 真实数据逐项能力验证
+python -m pytest tests/test_capability_gate.py # 「真实可用」门禁（秒级）
+python -m pytest tests/test_report.py -v       # 只看图表化报告
+python tools/validate_framework.py             # 真实数据逐项能力验证
+```
+
+### 4.8 生成图表化回测报告
+
+`framebt.report` 把一次回测结果渲染成一张**自包含 HTML**（图表以 base64 内嵌，
+无外部 CSS/JS 依赖，可直接离线打开）：
+
+- **收益曲线 + 回撤高亮**：上 pane 策略权益曲线（含等权买入持有基准），下 pane 回撤面积；
+- **交易 K 线标注**：逐标的日 K 线（蜡烛 + 成交量 + 均线），在买入/卖出成交点画「买 / 卖」标记；
+- **成交明细表**：帧、日期、方向、标的、数量、成交价、金额、费用、原因。
+
+```python
+from framebt import run_backtest, generate_report
+from framebt.strategies import DualMAStrategy
+
+res = run_backtest(
+    bars,                     # list[Bar] 或 list[dict]
+    DualMAStrategy(symbol, short=5, long=20),
+    symbol=symbol,
+    initial_cash=100_000.0,
+)
+
+# bars_by_symbol 用于画交易 K 线图；缺省时报告自动跳过该图。
+html = generate_report(
+    res,
+    bars_by_symbol={symbol: bars},
+    strategy_name="双均线 5/20",
+    output_path="reports/dual_ma.html",   # 可选：直接落盘
+)
+# html 是自包含字符串，也可自行写入其它位置。
+```
+
+`generate_report` 签名：
+
+```python
+generate_report(
+    result,                       # BacktestResult
+    *,
+    bars_by_symbol=None,          # {symbol: [Bar|dict, ...]}，画交易 K 线用
+    source=None,                  # DataSource，缺省的 bars 可从中按需加载
+    strategy_name=None,           # 报告标题，缺省取策略类名
+    output_path=None,             # 给出则额外写盘
+    config=ReportConfig(),        # benchmark=True / max_trade_charts=8 / period_frames=244 …
+) -> str                         # 返回自包含 HTML
 ```
 
 ---
@@ -208,20 +261,26 @@ def on_frame(self, frame, token, bus, host):
 ```
 
 - **令牌不可伪造**：总线把 token 与引擎权威的虚拟时间取较小者，伪造 token 拿不到任何额外数据。
+- **写保护（I5）**：`bus.record / set_now / reset` 在引擎启动后只接受引擎私有 key，
+  策略调用直接抛 `CausalityViolation`（私有属性不设防）。
 - **`lag` 原语**强制排除当前帧，防同帧泄漏；负 `lag` 视为显式请求未来，直接抛 `CausalityViolation`。
 - **`forming_bar`** 的 high/low 随帧变化，默认不应用于触发信号。
 
 ### 5.2 订单与撮合（`execution/`）
 
-| 订单类型 | 语义 |
+| 订单类型 | 语义（成交价口径） |
 |---|---|
-| `MARKET` | 以当帧开盘价成交（因果最保守） |
-| `LIMIT` | 限价挂单，未达价则 resting |
-| `STOP` / `STOP_LIMIT` | 触发价达到后转市价/限价 |
-| `TRAILING_STOP` | 跟踪止损，触发价随有利方向移动 |
-| `IOC` / `FOK` | 立即成交或取消 / 全部成交或取消 |
-| **条件单** | `Condition(trigger, level)`，引擎帧间监控 |
+| `MARKET` | 当帧开盘价；数量受当帧成交量约束 |
+| `LIMIT` | 开盘更优按开盘价，否则按限价；未触及 resting；成交量 FIFO 分摊 |
+| `STOP` | 帧内 high/low 穿越触发价才触发；跳空按开盘价，否则触发价 |
+| `STOP_LIMIT` | 同上；当前只有一个 `price` 字段，语义为「限价 = 触发价」 |
+| `TRAILING_STOP` | high/low 更新极值；反向穿越触发（跳空按开盘，否则触发价） |
+| `IOC` | 按当帧可成交量成交，余量取消 |
+| `FOK` | 可成交量不足则整单取消 |
+| **条件单** | `Condition(trigger, level)` 帧间监控；触发帧**下一帧开盘**成交 |
 | **OCO / Bracket** | `OrderGroup.oco([...])`，任一腿成交自动撤销其余 |
+
+> 旧实现会按当日 low/high 成交 LIMIT（事后拿到最低/最高点），已修正为「限价或更优开盘价」。
 
 **Bracket = 入场 + `on_fill` 返回 OCO 组**，无需专门订单类型：
 
@@ -238,8 +297,10 @@ def on_fill(self, fill):
 
 - **多腿持仓**：金字塔加仓 / 分批止盈跟踪每笔成本与结算日，FIFO 计算已实现盈亏
 - **T+1 结算**：买入腿在 `entry_frame + settlement_cycle` 前不可卖出
-- **公司行动**：拆股 / 现金分红 / 退市现金结算
+- **公司行动**：拆股 / 现金分红 / 退市现金结算（按 `ratio` 的每股对价入现金）
 - **A 股规则**：涨跌停（默认 ±10%）、停牌、T+1、交易日历
+  - 涨跌停是单一 `limit`，不自动区分创业板/科创板（20%）与北交所（30%）
+  - `trading_days` 按逻辑时间戳匹配 `frame.end_ns` 或 `end_ns-1`
 
 ### 5.4 成本与风控（`cost.py` / `guard.py`）
 
@@ -249,12 +310,17 @@ def on_fill(self, fill):
 
 ### 5.5 策略宿主（`core/host.py`）
 
-多唤醒机制，策略只注册它关心的类型：`on_frame / on_sub_step / on_event / on_condition / on_schedule / on_fill / on_lifecycle`。
+引擎**实际调度**的唤醒类型只有 `on_frame / on_sub_step / on_fill`。
+`on_event / on_condition / on_schedule / on_lifecycle` 是保留接口（已定义但引擎没有分发点），
+注册会触发 `UserWarning`，避免静默失效。
 
 > **`FILL` 默认开启很重要**：`on_fill` 是挂出止损/止盈等被动单的标准时机，若默认关闭，这类策略会**静默失效**。
 
 **避免重复下单**：订单有强制延迟，本帧下单不会立刻反映到持仓。策略应先用 `host.has_pending(symbol)` 检查，
-否则会在成交落地前每帧重复下单，导致仓位指数级增长。
+否则会在成交落地前每帧重复下单，导致仓位指数级增长。多标的轮动建议直接
+`if host.pending_orders(): return []`（等上一帧全部落地）。
+
+> ⚠️ 默认 `risk=NoOpRisk()` 不拦超买：重复下单会让现金变负（隐含杠杆）。严肃回测请传 `StandardRisk(...)`。
 
 确定性 RNG 由宿主注入（`host.rng`），策略**禁止**使用 `random` / `numpy.random`，否则破坏 I3。
 
@@ -274,34 +340,43 @@ def on_fill(self, fill):
 **核心原则落地**：因子函数只认 `Panel`，因此**同一份因子定义**同时驱动研究（整段面板）与回测（逐帧因果切片），
 不存在第二份实现。
 
-**真实数据验证结果（严格样本内/外切分）**：57 候选因子 → 10 通过门槛 → 去冗余后 8 个；
-样本外总收益 **+42.47%** vs 基准等权买入持有 +16.71%，超额 **+25.76%**（详见 `reports/ADAPTIVE.md`）。
+**真实数据验证结果（2026-10-17，500 只代表样本）**：57 候选因子 → **12 通过门槛** →
+去冗余后 **10 个**；样本外总收益 **−78.55%**，基准等权买入持有 +845.57%，超额 **−924.12%**，
+Sharpe −0.10，最大回撤 97.39%，费用 267.53% 初始资金（详见 `reports/ADAPTIVE.md`）。
 
-> ⚠️ 保留意见：验证池仅 24 只且为存活至今的大盘股（存活偏差）；样本外仅一段 5 年历史；换手偏高使结果对成本敏感。
-> **这构成「框架能端到端跑通并产出可解释结果」的工程证据，而非统计意义上的有效性证明。**
+> ⚠️ **旧 24 股结果（+42.47% / 超额 +25.76%）已作废**：该数据池已被全市场迁移替代，
+> 当前代码无法复现。当前负收益是策略层失败（换手 27.9×、费用失控），不是正 alpha 证据；
+> 也不能反过来证明「框架错误」。验证池仍是存活标的（存活偏差），结论不可外推。
 
 ---
 
-## 6. 真实数据：最有说服力的一项验证
+## 6. 真实数据：信号对照实验（修正版）
 
-「策略亏钱」不等于「框架有错」。为把两者分开，framebt 用**同一套代码只翻转排序方向**做对照实验：
+「策略亏钱」不等于「框架有错」。为把两者分开，framebt 用**同一套代码只翻转排序方向**做对照实验。
 
-| 排序模式 | 收益 | 说明 |
-|---|---|---|
-| momentum（买动量最高） | **−87.3%** | 顺势在本样本期巨亏 |
-| reversal（买动量最低） | **+201.6%** | 跑赢等权买入持有 |
-| random（随机排序） | −34.8% | 无信息基准（来自摩擦） |
-| 等权买入持有 | +180.7% | |
+> 旧版 6d 有两个缺陷：策略不查 `host.has_pending`（重复下单），默认 `NoOpRisk` 又不拦超买，
+> 现金会变负（隐含杠杆），于是出现 `−102%` / `+235,360%` 这种不可解释的数字。
+> 现在脚本会重算「期末现金/最低现金」，负现金直接判定该组无效。
 
-不依赖框架的纯统计检验给出同样结论：60 日动量与未来 20 日收益相关系数 **−0.058**，
-动量最高 20% 组未来收益 +1.25%，最低 20% 组 +3.14%。
+**100 只降采样（2026-10-20，`tools/validate_signal_transmission.py`）**：
 
-→ 本样本期（2018–2026 A 股大盘股）60 日动量呈**反转**特征，因此顺势组合亏损、逆势组合盈利。
-**框架忠实地把信号翻译成了盈亏**——它没有为了「看起来好看」而抹平这个残酷事实。
-这正是可信回测该有的样子：它惩罚自我欺骗，而不是替你掩盖。
+| 排序模式 | 收益 | 最大回撤 | 交易数 | 最低现金 |
+|---|---|---|---|---|
+| momentum（买动量最高） | −72.03% | 81.37% | 627 | 1 |
+| reversal（买动量最低） | +305.39% | 37.38% | 1185 | 0 |
+| random（随机排序） | +17.65% | 37.96% | 3326 | 12 |
+| 等权买入持有 | +2.37% | — | — | — |
 
-完整验证见 `reports/VALIDATION.md`：48,000 根真实日线、I1–I5 全通过、
+三组均未出现负现金。不依赖框架的纯统计（2065 个样本）：60 日动量与未来 20 日收益
+相关系数 **−0.065**，最高 20% 组 +1.33%，最低 20% 组 +2.06%。
+
+→ 方向与纯统计一致（本样本期 60 日动量偏反转）。但这是**机制合理性检查**：
+100 只降采样、存活偏差、单一 triad；绝对收益不得外推，也不构成策略能力证明。
+详见 [`reports/SIGNAL_TRANSMISSION.md`](reports/SIGNAL_TRANSMISSION.md)。
+
+完整验证见 `reports/VALIDATION.md`：5575 标的 / 15,577,265 根真实日线、I1–I5 全通过、
 账本外部审计偏差 `0.000000e+00`、成本可精确核验、A 股涨跌停/T+1 真实生效。
+（该报告的 6b–6d 为旧版脚本产物，已加作废声明；以 `SIGNAL_TRANSMISSION.md` 为准。）
 
 ---
 
@@ -336,10 +411,10 @@ framebt 最难得的品质，是它的**诚实**。
 
 ### 我们在找这样的人
 
-- **想打磨因果引擎的人**：Phase 6 路线图上还有多时钟域、帧内事件队列、成交概率模型、异步任务确定性等开放问题。
+- **想打磨因果引擎的人**：Phase 6 路线图上还有期权生命周期、帧内事件队列、异步任务确定性、逐笔盘口深度等开放问题（双时钟域/成交概率模型/实盘地基已落地）。
 - **想做多因子 / 自主发现的人**：符号回归、神经网络隐因子、因子生命周期都在持续演进。
 - **想补全 A 股微观结构的人**：真实订单簿与排队位置模型、日内因子、做空机制。
-- **想做好工程的人**：246 个测试、逐位复现、可核验成本——细节决定可信度。
+- **想做好工程的人**：429 个测试、逐位复现、可核验成本——细节决定可信度。
 - **想分享实证研究的人**：我们鼓励「预登记再跑数」的研究范式，把证伪的结果也当作贡献。
 
 ### 如何参与
