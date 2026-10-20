@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 import pytest
 
 from framebt import (
@@ -19,9 +21,10 @@ from framebt import (
 )
 
 
-def mkframe(fid: int, o: float, h: float, l: float, c: float, *, symbol: str = "S"):
+def mkframe(fid: int, o: float, h: float, l: float, c: float, *, symbol: str = "S",
+            volume: float = 1000.0):
     f = MarketFrame(fid, fid, fid + 1)
-    f.add_bar(Bar(timestamp=fid, symbol=symbol, open=o, high=h, low=l, close=c, volume=1000.0))
+    f.add_bar(Bar(timestamp=fid, symbol=symbol, open=o, high=h, low=l, close=c, volume=volume))
     return f
 
 
@@ -63,10 +66,24 @@ def test_limit_order_rests_until_price_reached():
     me.register(Order(side=OrderSide.BUY, symbol="S", size=100,
                       order_type=OrderType.LIMIT, price=9.5), 0)
     # 帧 1：开盘 10 > 9.5 → 不成交，resting
-    assert me.process(mkframe(1, 10, 11, 9, 10.5), 1) == []
-    # 帧 2：开盘 9 <= 9.5 → 成交于 9
+    assert me.process(mkframe(1, 10, 11, 9.6, 10.5), 1) == []
+    # 帧 2：low=8.5 <= 9.5 -> 帧内价触及限价（开盘 9 亦 <= 9.5），成交于 9
     fills = me.process(mkframe(2, 9, 10, 8.5, 9.5), 2)
     assert len(fills) == 1 and fills[0].price == 9
+
+
+def test_limit_order_fills_when_low_touches_but_open_does_not():
+    """Phase 2 帧内 crossing：买限价单开盘未突破，但帧内 low 触及限价即成交。
+
+    成交价必须是限价（9.5）或更优开盘价，不能取当日 low（9.2）——那等于
+    事后知道最低点，属于帧内前视。
+    """
+    me = MatchingEngine()
+    me.register(Order(side=OrderSide.BUY, symbol="S", size=100,
+                       order_type=OrderType.LIMIT, price=9.5), 0)
+    # 帧 1：open=10 > 9.5（开盘不突破），low=9.2 <= 9.5 -> 触及限价，成交于 9.5
+    fills = me.process(mkframe(1, 10, 11, 9.2, 10.5), 1)
+    assert len(fills) == 1 and fills[0].price == 9.5
 
 
 def test_limit_sell_rests_until_price_reached():
@@ -85,12 +102,21 @@ def test_limit_requires_price():
 
 def test_stop_order_triggers_on_breakdown():
     me = MatchingEngine()
-    # 卖出止损：最新价跌破 9.5 触发
+    # 卖出止损：帧内 low 跌破 9.5 触发，成交于触发价（不是收盘价/当帧开盘价）
     me.register(Order(side=OrderSide.SELL, symbol="S", size=100,
                       order_type=OrderType.STOP, price=9.5), 0)
     assert me.process(mkframe(1, 10, 10.5, 9.8, 10.0), 1) == []   # 未跌破
-    fills = me.process(mkframe(2, 9.9, 10.0, 9.2, 9.3), 2)        # 收盘 9.3 <= 9.5 触发
-    assert len(fills) == 1
+    fills = me.process(mkframe(2, 9.9, 10.0, 9.2, 9.3), 2)        # low=9.2 <= 9.5 触发
+    assert len(fills) == 1 and fills[0].price == 9.5
+
+
+def test_stop_gap_fills_at_open_not_trigger():
+    """跳空越过止损价：只能按更差的开盘价成交，不能按触发价成交。"""
+    me = MatchingEngine()
+    me.register(Order(side=OrderSide.SELL, symbol="S", size=100,
+                      order_type=OrderType.STOP, price=9.5), 0)
+    fills = me.process(mkframe(1, 8.8, 9.0, 8.5, 8.9), 1)
+    assert len(fills) == 1 and fills[0].price == 8.8
 
 
 def test_fok_and_ioc_fill_in_single_bar():
@@ -101,17 +127,35 @@ def test_fok_and_ioc_fill_in_single_bar():
         assert len(fills) == 1 and fills[0].size == 50
 
 
+def test_ioc_partial_fills_then_cancels_remainder():
+    """IOC：只能成交当帧可成交量，余量立即取消，不进入 resting。"""
+    me = MatchingEngine()
+    me.register(Order(side=OrderSide.BUY, symbol="S", size=500, order_type=OrderType.IOC), 0)
+    fills = me.process(mkframe(1, 10, 11, 9, 10.5, volume=120.0), 1)
+    assert len(fills) == 1 and fills[0].size == 120
+    assert me.pending_count() == 0
+
+
+def test_fok_cancels_when_volume_insufficient():
+    """FOK：可成交量不足时整单取消，一分不成交。"""
+    me = MatchingEngine()
+    me.register(Order(side=OrderSide.BUY, symbol="S", size=500, order_type=OrderType.FOK), 0)
+    fills = me.process(mkframe(1, 10, 11, 9, 10.5, volume=120.0), 1)
+    assert fills == []
+    assert me.pending_count() == 0
+
+
 def test_trailing_stop_trails_the_high():
     me = MatchingEngine()
     # 保护多头：从入场价 10 起，自最高点回落 5% 触发卖出
     me.register(Order(side=OrderSide.SELL, symbol="S", size=100,
                       order_type=OrderType.TRAILING_STOP, trail_pct=0.05,
                       price=10.0), 0)
-    # 帧 1：涨到 12 → trigger = 12 × 0.95 = 11.4，收盘 12 未触发
-    assert me.process(mkframe(1, 11, 12, 10.8, 12), 1) == []
-    # 帧 2：最高 12.1 → trigger 11.495，收盘 11.3 <= trigger → 触发
+    # 帧 1：涨到 12 → trigger = 12 × 0.95 = 11.4；low=11.8 未回落触发
+    assert me.process(mkframe(1, 11, 12, 11.8, 12), 1) == []
+    # 帧 2：最高 12.1 → trigger 11.495；low=11.2 触及 → 按触发价 11.495 成交
     fills = me.process(mkframe(2, 12, 12.1, 11.2, 11.3), 2)
-    assert len(fills) == 1 and fills[0].price == 12
+    assert len(fills) == 1 and math.isclose(fills[0].price, 12.1 * 0.95)
 
 
 def test_trailing_stop_requires_pct():
@@ -132,13 +176,15 @@ def test_conditional_order_does_not_fill_before_trigger():
 
 
 def test_conditional_order_fills_after_trigger():
+    """条件用收盘判定 → 只能在下一帧开盘成交，不能回头用触发帧开盘价。"""
     me = MatchingEngine()
     cond = Condition(trigger=Trigger.LAST_LE, level=9.5)
     me.register(Order(side=OrderSide.SELL, symbol="S", size=100, condition=cond), 0)
     me.process(mkframe(1, 10, 11, 9, 10), 1)               # 未触发 → resting
-    fills = me.process(mkframe(2, 9.6, 10, 8.5, 9.0), 2)   # close=9.0 <= 9.5 → 触发成交
+    assert me.process(mkframe(2, 9.6, 10, 8.5, 9.0), 2) == []  # close 9.0 触发，但只 arm
+    fills = me.process(mkframe(3, 9.4, 9.8, 9.2, 9.5), 3)  # 下一帧开盘成交
     assert len(fills) == 1
-    assert fills[0].price == 9.6  # 以当帧开盘价成交
+    assert fills[0].price == 9.4
 
 
 def test_conditional_resting_does_not_infinite_loop():

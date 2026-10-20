@@ -173,3 +173,40 @@ def test_i5_engine_terminates_on_exhausted_data():
                        initial_cash=10000.0)
     assert res.frames >= 5
     assert res.end_ns > 0
+
+
+class _Writer(FrameStrategy):
+    """尝试在策略里改写总线历史 / 权威时间。"""
+
+    def __init__(self):
+        self.errors = []
+
+    def on_frame(self, frame, token, bus, host):
+        if frame.frame_id != 0:
+            return []
+        for fn in (
+            lambda: bus.record("close", "S", 0, 9999.0),
+            lambda: bus.set_now(10**9),
+            lambda: bus.reset(),
+            lambda: bus.enable_write_guard(object()),   # 不能替换 key
+        ):
+            try:
+                fn()
+            except CausalityViolation as exc:
+                self.errors.append(str(exc))
+        return []
+
+
+def test_i5_strategy_cannot_write_bus_history_or_clock():
+    """I5：策略只能读总线；record / set_now / reset 必须被引擎写保护拒绝。"""
+    probe = _Writer()
+    Engine(BarFeed.from_dicts(_bars(5), symbol="S"), probe).run()
+    assert len(probe.errors) == 4, probe.errors
+
+
+def test_i5_engine_still_owns_bus_writes():
+    """写保护不能误伤引擎自身：正常回测仍需注入全部 Bar。"""
+    res = run_backtest(_bars(6), DualMAStrategy("S", short=1, long=3), symbol="S",
+                       initial_cash=10000.0)
+    assert res.frames >= 6
+    assert len(res.equity_curve) >= 6

@@ -42,6 +42,26 @@ def test_window_larger_than_history_returns_all():
     assert bus.get("close", "A", token=CausalToken(2, 2), window=100) == [100.0, 101.0, 102.0]
 
 
+def test_window_zero_returns_empty_not_all_history():
+    """window=0 曾因 ``values[-0:]`` 退化成全量历史；必须为空。"""
+    bus = _bus_with_series(5)
+    assert bus.get("close", "A", token=CausalToken(4, 4), window=0) == []
+
+
+def test_negative_window_is_rejected():
+    bus = _bus_with_series(5)
+    with pytest.raises(ValueError):
+        bus.get("close", "A", token=CausalToken(4, 4), window=-1)
+
+
+def test_series_negative_lag_raises():
+    """``series`` 是 get 之外的第二个读接口；负 lag 同样不得成为 I1 旁路。"""
+    bus = _bus_with_series(10)
+    bus.set_now(4)
+    with pytest.raises(CausalityViolation):
+        bus.series("close", "A", CausalToken(4, 4), lag=-2)
+
+
 # ---- §4.3 lag 原语（排除当前帧，防同帧泄漏）----
 
 def test_lag_excludes_current_frame():

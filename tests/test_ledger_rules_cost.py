@@ -125,11 +125,14 @@ def test_ledger_corporate_action_dividend():
 
 def test_ledger_delist_cash_settlement():
     led = Ledger(cash=0.0)
-    led.apply_fill(fill(OrderSide.BUY, 100, 10.0))
+    led.apply_fill(fill(OrderSide.BUY, 100, 10.0))       # cash = -1000
     led.apply_corporate_action(CorporateAction(symbol="S", kind="delist", date=1, ratio=8.0))
     pos = led.position("S")
     assert pos.net_size() == 0
-    assert math.isclose(pos.realized_pnl, -200.0)  # (8-10)*100
+    assert math.isclose(pos.realized_pnl, -200.0)        # (8-10)*100
+    # 退市对价必须真的进现金：-1000 + 800 = -200；不能只清仓不给钱。
+    assert math.isclose(led.cash, -200.0)
+    assert math.isclose(led.mark_to_market({}), -200.0)
 
 
 # ===========================================================================
@@ -176,6 +179,16 @@ def test_rules_suspension():
     reason = rules.check(Order(side=OrderSide.BUY, symbol="S", size=1),
                          Ledger(cash=1e6), mkframe(0, 10, 11, 9, 10))
     assert reason is not None and "停牌" in reason
+
+
+def test_rules_trading_calendar_blocks_off_day():
+    """trading_days 必须真的生效：帧末时间不在日历内 → 拒绝。"""
+    f = mkframe(3, 10, 11, 9, 10)                      # frame.end_ns = 4
+    order = Order(side=OrderSide.BUY, symbol="S", size=100)
+    assert StandardAshareRules(trading_days={4}).check(order, Ledger(cash=1e6), f) is None
+    assert StandardAshareRules(trading_days={3}).check(order, Ledger(cash=1e6), f) is None
+    reason = StandardAshareRules(trading_days={5}).check(order, Ledger(cash=1e6), f)
+    assert reason is not None and "不可交易" in reason
 
 
 def test_rules_normal_order_passes():

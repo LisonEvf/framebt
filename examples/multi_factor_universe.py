@@ -1,6 +1,7 @@
 """示例 2：横截面动量选股（§4.5 / §4.3，框架差异化能力）。
 
-在**全选股池**上，每帧用动量因子横截面排名买入 TopK，并对比等权买入持有基准。
+在**选股池代表子集**（默认前 200 只，`--max-symbols` 可调）上，每帧用动量因子横截面
+排名买入 TopK，并对比等权买入持有基准。全市场 5575 只的横截面是小时级，故默认降采样。
 演示：
   - ``bus.cross_section`` 横截面请求（§4.5）
   - ``lag=1`` 排除当前帧，防同帧泄漏（§4.3）
@@ -11,6 +12,8 @@
 """
 
 from __future__ import annotations
+
+import argparse
 
 from framebt import (
     Engine,
@@ -26,10 +29,18 @@ LOOKBACK_SHORT, LOOKBACK_LONG = 20, 60
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description="横截面动量选股示例")
+    ap.add_argument("--max-symbols", type=int, default=200,
+                    help="选股池上限（默认 200；全市场 5575 只会把示例跑成小时级）")
+    args = ap.parse_args()
+
     src = OpentdxParquetSource()
-    universe = src.available_symbols()
-    if not universe:
+    all_syms = src.available_symbols()
+    if not all_syms:
         raise SystemExit("数据源无 K 线数据；请先运行 tools/backfill_history.py")
+    universe = all_syms[: max(10, args.max_symbols)]
+    print(f"选股池上限: {len(universe)} / 全市场 {len(all_syms)}"
+          f"（--max-symbols 可调；全市场横截面是小时级）")
 
     feed = src.universe(universe)
     span_lo, span_hi = feed.span()
