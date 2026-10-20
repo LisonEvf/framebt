@@ -4,7 +4,7 @@
 > 测试数从 280 增至 **429**（422 passed + 7 xfailed 边界）；`on_sub_step` 已被引擎真正调度；吞吐量以
 > `reports/VALIDATION.md`（36k / 868 bars/s）与本机复测（约 8k bars/s）为准，
 > 本文的「84k / 7k」不再引用。`LIMIT / STOP / TRAILING` 的成交价语义也已修正
-> （见 README §5.2 / §9）。
+> （见 USER_GUIDE 订单表 / README「Known boundaries」）。
 
 > 目标：把「回测 / 实盘同一套策略与引擎调度」从接口契约落到可运行实现，并在帧内执行、
 > A 股融券做空、双时钟域三个维度补齐 Phase 6 路线图。

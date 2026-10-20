@@ -1,11 +1,16 @@
 [project]
 name = "framebt"
 version = "1.0.0"
-description = "帧刷新量化回测框架 · Frame-refresh causal backtesting engine (A-share)"
+description = "A-share causal backtesting engine: point-in-time data bus, delayed execution, T+1/price limits, deterministic replay. Core is pure Python."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"
-keywords = ["quant", "backtest", "causal", "frame-refresh", "A-share", "trading"]
+keywords = [
+    "quantitative-finance", "backtesting", "backtest-engine", "quant",
+    "algorithmic-trading", "trading-strategies", "a-share", "china-stock-market",
+    "causal", "point-in-time", "look-ahead-bias", "event-driven", "deterministic",
+    "market-simulation", "stock-market", "etf", "momentum", "multi-factor",
+]
 authors = [{ name = "LisonEvf", email = "lisonevf@gmail.com" }]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -30,6 +35,7 @@ dev = ["pytest"]
 [project.urls]
 Repository = "https://github.com/LisonEvf/framebt.git"
 Issues = "https://github.com/LisonEvf/framebt/issues"
+Documentation = "https://github.com/LisonEvf/framebt/blob/master/docs/INDEX.md"
 
 [build-system]
 requires = ["setuptools>=61.0"]

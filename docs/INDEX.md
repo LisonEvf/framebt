@@ -52,7 +52,7 @@
 1. 新用户：`README.md` → `USER_GUIDE.md` → `examples/demo_quickstart.py`；
 2. 想评估可信度：`reports/CAPABILITY.md` → `reports/USABILITY.md` → `reports/MUTATION.md`；
 3. 想复刻外部策略：`docs/REPLICATION.md` → `reports/EXTERNAL_REPLICATION.md`；
-4. 想知道坑在哪：README §9「已知边界」→ `reports/USABILITY.md` §5 → `docs/archive/REMEDIATION.md` §4。
+4. 想知道坑在哪：README「Known boundaries」→ `reports/USABILITY.md` §5 → `docs/archive/REMEDIATION.md` §4。
 
 ## 维护约定
 
