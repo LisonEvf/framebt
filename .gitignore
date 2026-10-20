@@ -21,6 +21,9 @@ env/
 results/
 *.csv
 
-# framebt tool caches / logs（生成物，不入库）
-tools/etf_cache/
+# framebt tool caches / logs / generated artifacts（生成物，不入库）
+tools/*_cache/
+tools/report/
 tools/*.log
+reports/*.html
+reports/*_RUN.txt
