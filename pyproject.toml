@@ -1,7 +1,7 @@
 [project]
 name = "framebt"
 version = "1.0.0"
-description = "A-share causal backtesting engine: point-in-time data bus, delayed execution, T+1/price limits, deterministic replay. Core is pure Python."
+description = "A-share frame-refresh causal backtesting engine: point-in-time data bus, delayed execution, T+1/price limits, deterministic replay. Core is pure Python."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"

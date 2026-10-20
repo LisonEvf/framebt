@@ -14,8 +14,10 @@
 > framebt 把这条变成引擎的硬约束：固定 Δt 推进时间、`CausalToken` 强制 point-in-time 数据访问、
 > 帧 t 决策 → **帧 t+1 开盘成交**。T+1、涨跌停、成本、账本都可逐笔独立复算。
 
-**framebt** is a deterministic, causal backtesting engine for China A-shares (stocks and ETFs).
-It turns **look-ahead bias, T+1 settlement, price limits and cost accounting** into structural
+**framebt** is a deterministic, causal **frame-refresh** backtesting engine for China A-shares
+(stocks and ETFs). It advances virtual time by a fixed Δt, enforces point-in-time data access,
+and fills frame-t orders at the **next** frame's open. It turns
+**look-ahead bias, T+1 settlement, price limits and cost accounting** into structural
 constraints instead of coding conventions. The core engine has **zero third-party dependencies**.
 
 [为什么](#why-framebt--为什么是-framebt) ·
