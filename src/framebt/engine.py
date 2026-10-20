@@ -1,7 +1,7 @@
 """Engine Core：时间模型 + 帧生命周期编排（§2 / §3）。
 
 核心骨架：**固定 Δt 主动推进虚拟时间**。每帧四阶段（§2.2）：
-   Phase 1 市场数据注入：把落在 (frame_start, frame_end] 的 Bar 写入 Bus
+   Phase 1 市场数据注入：把落在 [frame_start, frame_end) 的 Bar 写入 Bus
    Phase 2 唤醒分发：host.dispatch_frame → 策略 on_frame → 返回订单
    Phase 3 订单处理与撮合：matcher.process（延迟管线 + 价格-时间优先）
    Phase 4 状态快照与绩效记录：ledger.mark_to_market → 权益曲线
@@ -35,17 +35,27 @@ from .cost import CostModel, NoOpCost
 from .guard import RiskMiddleware, NoOpRisk
 from .core import StrategyHost
 from .data_bus import CausalToken, DataBus
-from .execution import MatchingEngine
+from .execution import MatchingEngine, ExecutionBackend
 
 
 class Engine:
-    """帧刷新回测引擎（单时钟域）。
+    """帧刷新回测引擎（双时钟域，Phase 6 · ④）。
+
+    策略跑在日帧时钟（on_frame，慢时钟），执行跑在子步进时钟（on_sub_step × sub_steps，
+    快时钟）。父调度（``run`` 循环）在每帧内按 ``step=0..sub_steps-1`` 顺序推进子步进时钟，
+    各子步进共享状态（子步进 i 登记的订单被子步进 i+1 的 ``host.pending_orders`` 可见），
+    据此把两把时钟同步到同一虚拟时刻。
 
     参数：
       feed：原始 K 线数据源（BarFeed，已按 (timestamp, sequence_id) 排序）。
       strategy：策略实例。
       delta_t：固定逻辑步长（默认 1）。日线数据 Δt=1 时每帧一根 Bar。
-      delay_frames：订单从生成到可撮合的强制延迟帧数（默认 1，满足 I2）。
+      delay_frames：订单从生成到可撮合的强制延迟帧数（默认 1，满足 I2；仅回测后端）。
+      sub_steps：每根日帧内执行的「执行子步进」数（默认 1，零回归）。>1 让策略在一帧内
+        多次查询成交概率（``matcher.estimated_fill_fraction``）/ 在途订单（``host.pending_orders``）
+        并调整下一帧下单（不跨帧因果）。
+      executor：订单 / 撮合后端（ExecutionBackend，默认 MatchingEngine）。实盘传入
+        LiveConnector 即可让同一策略与引擎调度切到实盘（Phase 6 实盘复用地基）。
       initial_cash：初始现金。
       seed：确定性 RNG 种子。
       settlement_cycle：结算周期（T+1 → 1；T+0 → 0）。
@@ -61,6 +71,8 @@ class Engine:
         delta_t: int = 1,
         seed: int = 0,
         delay_frames: int = 1,
+        sub_steps: int = 1,
+        executor: Optional[ExecutionBackend] = None,
         initial_cash: float = 0.0,
         settlement_cycle: int = 1,
         cost_model: Optional[CostModel] = None,
@@ -69,18 +81,30 @@ class Engine:
     ):
         if delta_t <= 0:
             raise ValueError("delta_t 必须为正")
-        if delay_frames < 1:
+        # delay_frames 是 MatchingEngine（回测后端）的 I2 约束；自定义 executor（如实盘
+        # LiveConnector）自行处理延迟语义，故仅在默认后端时校验。
+        if executor is None and delay_frames < 1:
             raise ValueError("delay_frames 必须 >= 1（I2：帧 t 订单最早帧 t+1 成交）")
+        if sub_steps < 1:
+            raise ValueError("sub_steps 必须 >= 1（双时钟域：每帧至少 1 个子步进）")
 
         self.feed = feed
         self.start_ns = int(start_ns)
         self.delta_t = int(delta_t)
+        # 双时钟域（Phase 6 · ④）：每根日帧内执行子步进的数（父调度按 step 推进快时钟）。
+        self.sub_steps = int(sub_steps)
 
         self.bus = DataBus()
+        # I5：总线写保护。key 只在本引擎实例内持有，策略只拿到 bus，无法 record /
+        # set_now 改写历史或权威时间（未启用 guard 的离线用法行为不变）。
+        self._bus_key = object()
+        self.bus.enable_write_guard(self._bus_key)
         # settlement_cycle 必须同时传给 Ledger：持仓腿的「可卖日」由它决定，
         # 否则 T+0 配置下账本仍按 T+1 冻结，规则与账本口径不一致。
         self.ledger = Ledger(cash=initial_cash, settlement_cycle=settlement_cycle)
-        self.matcher = MatchingEngine(delay_frames=delay_frames)
+        # executor 是 Phase 6 实盘复用地基：回测用 MatchingEngine，实盘换 LiveConnector
+        # （遵守同一 ExecutionBackend 契约）。策略与引擎调度逻辑不依赖具体实现。
+        self.matcher = self.executor = executor or MatchingEngine(delay_frames=delay_frames)
         self.host = StrategyHost(seed=seed)
         self.host.register(strategy)
         self.host.portfolio = self.ledger
@@ -103,20 +127,17 @@ class Engine:
     # ---- Phase 1：数据注入 ----
 
     def _inject(self, bar: Bar) -> None:
-        self.bus.record("open", bar.symbol, bar.timestamp, bar.open)
-        self.bus.record("high", bar.symbol, bar.timestamp, bar.high)
-        self.bus.record("low", bar.symbol, bar.timestamp, bar.low)
-        self.bus.record("close", bar.symbol, bar.timestamp, bar.close)
-        self.bus.record("volume", bar.symbol, bar.timestamp, bar.volume)
-        self.bus.record("amount", bar.symbol, bar.timestamp, bar.amount)
-        self.bus.record("float_shares", bar.symbol, bar.timestamp, bar.float_shares)
-        self.bus.record("turnover", bar.symbol, bar.timestamp, bar.turnover)
         # vwap / 市值：优先用数据源已对齐复权口径的值；否则退回近似
         vwap = bar.vwap if bar.vwap > 0 else (
             (bar.amount / bar.volume) if bar.volume > 0 else bar.close)
         cap = bar.market_cap if bar.market_cap > 0 else bar.close * bar.float_shares
-        self.bus.record("vwap", bar.symbol, bar.timestamp, vwap)
-        self.bus.record("market_cap", bar.symbol, bar.timestamp, cap)
+        for key, value in (
+            ("open", bar.open), ("high", bar.high), ("low", bar.low),
+            ("close", bar.close), ("volume", bar.volume), ("amount", bar.amount),
+            ("float_shares", bar.float_shares), ("turnover", bar.turnover),
+            ("vwap", vwap), ("market_cap", cap),
+        ):
+            self.bus.record(key, bar.symbol, bar.timestamp, value, _key=self._bus_key)
         self._last_close[bar.symbol] = bar.close
 
     # ---- 盘前检查（风控 + 市场规则组合）----
@@ -138,7 +159,9 @@ class Engine:
             if isinstance(item, OrderGroup):
                 self.matcher.register_group(item, frame_id)
             else:
-                self.matcher.register(item, frame_id)
+                # 走 ExecutionBackend.submit（后端抽象的规范入口）：MatchingEngine /
+                # LiveConnector 都实现它，故引擎不依赖具体后端的 register 别名。
+                self.matcher.submit(item, frame_id)
 
     # ---- 帧编排 ----
 
@@ -176,9 +199,10 @@ class Engine:
             # ---- Phase 2：唤醒分发 ----
             # 先登记权威虚拟时间：即使策略伪造 issued_at 更大的 token，
             # 总线也会钳制到此刻，拿不到未来数据（§4.1 / I1）。
-            self.bus.set_now(frame_end)
+            self.bus.set_now(frame_end, _key=self._bus_key)
+            # token 始终创建（供 on_sub_step 等子步进调度用；静态帧亦需权威时间）。
+            token = CausalToken(frame_end, k)
             if injected > 0:
-                token = CausalToken(frame_end, k)
                 orders = self.host.dispatch_frame(frame, token, self.bus)
                 self._register_items(orders, k)
 
@@ -194,6 +218,20 @@ class Engine:
                 fill_orders = self.host.dispatch_fill(fill)
                 self._register_items(fill_orders, k)
                 fills.append(fill)
+
+            # ---- Phase 3.5：执行子步进（双时钟域 · N 子步进）----
+            # 本帧撮合之后、推进虚拟时间之前。父调度按「执行子步进时钟」顺序推进 N 个子步进
+            # （step=0..sub_steps-1），把策略的日帧时钟（on_frame，慢）与执行的子步进时钟（快）
+            # 同步到同一虚拟时刻。``on_sub_step`` 默认未注册（``default_wakeups`` 不含
+            # SUB_STEP），故既有策略行为零改动。
+            # 注册的策略可在每个子步进中查询成交概率（``matcher.estimated_fill_fraction``）
+            # / 在途订单（``host.pending_orders``），调整下一帧下单（不跨帧因果）。各子步进
+            # 共享状态：子步进 i 登记的订单被子步进 i+1 的 ``host.pending_orders`` 可见——父调度
+            # 据此把两把时钟串成一条顺序链。
+            for _sub_step in range(self.sub_steps):
+                sub_orders = self.host.dispatch_sub_step(
+                    frame, _sub_step, self.sub_steps, token, self.bus)
+                self._register_items(sub_orders, k)
 
             # ---- Phase 4：状态快照与绩效记录 ----
             marks = self._marks(frame)
@@ -257,6 +295,7 @@ def run_backtest(
     delta_t: int = 1,
     seed: int = 0,
     delay_frames: int = 1,
+    sub_steps: int = 1,
     initial_cash: float = 0.0,
     settlement_cycle: int = 1,
     cost_model: Optional[CostModel] = None,
@@ -272,6 +311,7 @@ def run_backtest(
         delta_t=delta_t,
         seed=seed,
         delay_frames=delay_frames,
+        sub_steps=sub_steps,
         initial_cash=initial_cash,
         settlement_cycle=settlement_cycle,
         cost_model=cost_model,

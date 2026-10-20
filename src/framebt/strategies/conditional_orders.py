@@ -37,8 +37,8 @@ class TrendWithStop(FrameStrategy):
             return []
 
         orders: list = []
-        # 趋势确认：价格在均线上方且尚未持仓 → 全仓买入
-        if last > ma and pos.net_size() == 0:
+        # 趋势确认：价格在均线上方且尚未持仓 → 全仓买入（现金不足时不下单）
+        if last > ma and pos.net_size() == 0 and host.portfolio.cash > 0:
             orders.append(
                 Order(
                     side=OrderSide.BUY,

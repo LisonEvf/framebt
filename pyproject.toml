@@ -21,6 +21,10 @@ dependencies = []
 [project.optional-dependencies]
 # 数据源（读取 opentdx 数仓的 Parquet）与绩效分析可选依赖。
 data = ["pandas", "pyarrow"]
+# 图表化 HTML 报告（report.py）。核心引擎不 import 它。
+report = ["matplotlib"]
+# 一把梭：数据源 + 报告 + 测试。
+all = ["pandas", "pyarrow", "matplotlib", "pytest"]
 dev = ["pytest"]
 
 [project.urls]

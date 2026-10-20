@@ -77,6 +77,7 @@ class StandardRisk(RiskMiddleware):
     参数：
       max_position_pct：单标的最大仓位（占权益比例，默认 1.0 = 全仓）。
       max_order_pct：单笔订单最大占权益比例（默认 1.0）。
+      max_short_pct：空头保证金上限（占权益比例，默认 1.0）。
       min_cash：最小保留现金（默认 0）。
       reserve_pending：是否把**在途买单**占用的资金计入预留（默认 True）。
 
@@ -89,11 +90,13 @@ class StandardRisk(RiskMiddleware):
         self,
         max_position_pct: float = 1.0,
         max_order_pct: float = 1.0,
+        max_short_pct: float = 1.0,
         min_cash: float = 0.0,
         reserve_pending: bool = True,
     ):
         self.max_position_pct = max_position_pct
         self.max_order_pct = max_order_pct
+        self.max_short_pct = max_short_pct
         self.min_cash = min_cash
         self.reserve_pending = reserve_pending
         self.matcher = None   # 由 Engine 注入，用于查询在途订单
@@ -134,8 +137,9 @@ class StandardRisk(RiskMiddleware):
         if equity <= 0 or notional <= 0:
             return None  # 无法评估时放行（如预算单无明确金额）
 
-        # 单笔订单占比（相对**真实权益**）
-        if notional > equity * self.max_order_pct:
+        # 单笔订单占比（相对**真实权益**）。仅对「花钱」类订单（买入 / 开空）有意义：
+        # 平仓卖出的 notional 天然≈100% 权益，受此约束会把所有全仓平仓都拒掉。
+        if order.side in (OrderSide.BUY, OrderSide.SELL_SHORT) and notional > equity * self.max_order_pct:
             return (
                 f"单笔订单 {notional:.0f} 超最大订单比例 "
                 f"({self.max_order_pct:.0%} × 权益 {equity:.0f})"
@@ -157,6 +161,21 @@ class StandardRisk(RiskMiddleware):
                 return (
                     f"买入后 {order.symbol} 仓位 {post_notional:.0f} 超最大仓位 "
                     f"({self.max_position_pct:.0%} × 权益 {equity:.0f})"
+                )
+            return None
+
+        elif order.side is OrderSide.SELL_SHORT:
+            # 开空：收到卖空所得现金（增加现金），需满足最小保留 + 保证金约束
+            proceeds = notional
+            new_cash = portfolio.cash + proceeds
+            if new_cash < self.min_cash:
+                return f"开空后现金 {new_cash:.0f} 低于最小保留 {self.min_cash:.0f}"
+            # 空头保证金不得超权益比例（既有空头保证金 + 本笔新增）
+            margin_after = portfolio.margin_requirement() + notional * portfolio.margin_ratio
+            if margin_after > equity * self.max_short_pct + 1e-6:
+                return (
+                    f"开空后保证金占用 {margin_after:.0f} 超最大空头比例 "
+                    f"({self.max_short_pct:.0%} × 权益 {equity:.0f})"
                 )
             return None
 

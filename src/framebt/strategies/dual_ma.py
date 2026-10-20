@@ -46,7 +46,7 @@ class DualMAStrategy(FrameStrategy):
 
         pos = host.portfolio.position(self.symbol)
         orders: list = []
-        if buy_signal and pos.net_size() == 0:
+        if buy_signal and pos.net_size() == 0 and host.portfolio.cash > 0:
             orders.append(
                 Order(
                     side=OrderSide.BUY,

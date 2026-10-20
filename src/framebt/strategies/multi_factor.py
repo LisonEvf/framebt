@@ -54,6 +54,9 @@ class MomentumCrossSection(FrameStrategy):
         self._factor_registered = True
 
     def on_frame(self, frame, token, bus, host) -> list:
+        # 有在途单先等落地：避免上一帧未成交的买单与本帧新买单叠加透支现金。
+        if host.pending_orders():
+            return []
         self._ensure_factor(bus)
         # 动量因子（§4.5 横截面），lag=1 排除当前帧，避免同帧泄漏（§4.3）。
         rows = bus.cross_section(
@@ -75,16 +78,17 @@ class MomentumCrossSection(FrameStrategy):
         # 以**账本实际敞口**为准（而非「意图持仓」），避免订单被拒后意图与持仓漂移。
         actual = {s: n for s, n in pos.exposure().items() if n > 0}
 
-        # 卖出：实际持有但已跌出目标
+        # 卖出：实际持有但已跌出目标（已有在途单则不重复下）
         for sym, size in actual.items():
-            if sym not in target:
+            if sym not in target and not host.has_pending(sym):
                 orders.append(
                     Order(side=OrderSide.SELL, symbol=sym, size=size,
                           order_type=OrderType.MARKET)
                 )
 
-        # 买入：目标中尚未持有的，用**可用现金**在新增标的间均分
-        to_buy = [s for s in ranked[: self.top_k] if actual.get(s, 0) <= 0]
+        # 买入：目标中尚未持有、且没有在途买单的，用**可用现金**在新增标的间均分
+        to_buy = [s for s in ranked[: self.top_k]
+                  if actual.get(s, 0) <= 0 and not host.has_pending(s)]
         if to_buy:
             per = pos.cash / len(to_buy)
             # 现金已全部占用（满仓）时 per<=0：不下单，等卖出腿释放资金（T+1/延迟）

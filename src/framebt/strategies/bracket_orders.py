@@ -36,8 +36,8 @@ class BracketStrategy(FrameStrategy):
         ma = sum(closes[-self.ma_period:]) / self.ma_period
         pos = host.portfolio.position(self.symbol)
 
-        # 趋势向上且空仓且未挂 bracket → 入场
-        if closes[-1] > ma and pos.net_size() == 0 and not self._armed:
+        # 趋势向上且空仓且未挂 bracket → 入场（现金不足时不下单）
+        if closes[-1] > ma and pos.net_size() == 0 and not self._armed and host.portfolio.cash > 0:
             self._armed = True
             return [
                 Order(

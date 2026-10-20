@@ -16,6 +16,7 @@ from enum import Enum
 class OrderSide(str, Enum):
     BUY = "buy"
     SELL = "sell"
+    SELL_SHORT = "sell_short"  # A 股融券做空（区别于 SELL 平多）
 
 
 class OrderType(str, Enum):
@@ -123,8 +124,11 @@ class Order:
     placement_frame: int | None = None  # 由引擎填写
     state: OrderState = OrderState.PENDING
     condition: "Condition | None" = None  # 条件单关联的触发条件
+    condition_armed: int | None = None  # 条件已满足的帧；下一帧开盘才允许成交（防帧内前视）
+    short: bool = False  # 融券做空标记（= side is SELL_SHORT，由 __post_init__ 统一定义）
 
     def __post_init__(self):
+        self.short = self.side is OrderSide.SELL_SHORT
         if self.order_type in (OrderType.LIMIT, OrderType.STOP, OrderType.STOP_LIMIT) and self.price <= 0:
             raise ValueError(f"订单 {self.order_type.value} 必须提供正价格 price")
         if self.order_type is OrderType.TRAILING_STOP and self.trail_pct <= 0:

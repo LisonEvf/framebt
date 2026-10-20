@@ -6,10 +6,15 @@ RNG 由 host 持有并注入回调，保证 I3（策略不得使用外部随机�
 唤醒类型在引擎推进时由 StrategyHost 分发（§10.1）。策略只注册它关心的类型，
 未注册的回调即便被引擎调用也直接跳过——这解决了「所有策略被迫适配每帧主动检查」
 的范式单一问题。
+
+**当前真正有分发点的只有 FRAME / SUB_STEP / FILL**（见 ``SCHEDULED_WAKEUPS``）。
+EVENT / CONDITION / SCHEDULE / LIFECYCLE 是保留接口，注册会触发 UserWarning，
+避免策略静默失效。
 """
 
 from __future__ import annotations
 
+import warnings
 from enum import Enum
 from typing import Callable, Optional
 
@@ -26,6 +31,11 @@ class WakeupType(str, Enum):
     SCHEDULE = "on_schedule"
     FILL = "on_fill"
     LIFECYCLE = "on_lifecycle"
+
+
+#: 当前引擎真正会分发的唤醒类型。其余类型是保留接口（见 host 文档），
+#: 注册了也不会被调用；register() 会对它们发 UserWarning，避免“静默失效”。
+SCHEDULED_WAKEUPS = frozenset({WakeupType.FRAME, WakeupType.SUB_STEP, WakeupType.FILL})
 
 
 class StrategyHost:
@@ -66,6 +76,14 @@ class StrategyHost:
         else:
             self._wakeups = set(getattr(strategy, "default_wakeups", None)
                                 or [WakeupType.FRAME])
+        unscheduled = self._wakeups - SCHEDULED_WAKEUPS
+        if unscheduled:
+            warnings.warn(
+                "以下唤醒类型尚未被引擎调度，注册后不会收到回调："
+                + ", ".join(sorted(w.value for w in unscheduled)),
+                UserWarning,
+                stacklevel=2,
+            )
 
     def on_fill(self, cb: Callable[[FillEvent], None]) -> None:
         self._fill_callbacks.append(cb)

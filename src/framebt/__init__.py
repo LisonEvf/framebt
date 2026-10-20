@@ -58,16 +58,50 @@ from .core import (
 )
 from .engine import Engine, run_backtest
 
+# ---- 回测报告（图表化展示，依赖 matplotlib）----
+# 惰性导入：`import framebt` 不应因为未安装 matplotlib 而失败。报告 API 仍可
+# `from framebt import generate_report`（PEP 562 模块级 __getattr__），只有真正
+# 调用时才 import report/matplotlib。核心引擎因此保持「零第三方依赖」。
+_REPORT_EXPORTS = frozenset({
+    "generate_report", "save_report", "render_equity_chart",
+    "render_trade_chart", "ReportConfig",
+})
+
+
+def __getattr__(name):
+    if name in _REPORT_EXPORTS:
+        from . import report as _report
+
+        return getattr(_report, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 # ---- 因果数据总线（§4）----
 from .data_bus import DataBus, FactorRow
 
 # ---- 数据源接入（§12）----
-from .feed import BarFeed
+from .feed import BarFeed, MarketFeed
 from .data_sources.base import DataSource
 from .data_sources.opentdx import OpentdxParquetSource, default_data_dir
 
-# ---- 订单与撮合（§5）----
-from .execution import MatchingEngine, FillResult, CancelResult, OrderBook, OrderGroup, Atomicity, LinkMode
+# ---- 订单与撮合（§5 / Phase 6）----
+from .execution import (
+    MatchingEngine,
+    ExecutionBackend,
+    FillResult,
+    CancelResult,
+    OrderBook,
+    OrderGroup,
+    Atomicity,
+    LinkMode,
+)
+
+# ---- 实盘复用地基（Phase 6 · ①）----
+from .live import (
+    LiveFeed,
+    LiveConnector,
+    Transport,
+    SimulatedTransport,
+)
 
 # ---- 账本（§6）----
 from .ledger import Ledger, Position, PositionLeg
@@ -81,6 +115,19 @@ from .cost import CostModel, NoOpCost, StandardCost
 # ---- 风控中间件（§9）----
 from .guard import RiskMiddleware, NoOpRisk, StandardRisk, IncrementalRisk
 
+# ---- 选股 + 资金抽象（§17）----
+from .selection import (
+    SymbolSelector,
+    SymbolBudgetPolicy,
+    FixedUniverseSelector,
+    CrossSectionRankSelector,
+    TrendPresenceSelector,
+    LiquiditySelector,
+    CompositeSelector,
+    KellyBudgetPolicy,
+)
+from .strategies import RotationStrategy
+
 __all__ = [
     # core
     "Bar", "Tick", "Order", "OrderId", "OrderSide", "OrderType", "OrderState",
@@ -89,11 +136,16 @@ __all__ = [
     "StaticFrameBuilder", "BacktestResult", "Performance", "StrategyHost",
     "WakeupType", "FrameStrategy", "CausalToken", "CausalityViolation", "FactorRow",
     "Engine", "run_backtest",
+    # report
+    "generate_report", "save_report", "render_equity_chart",
+    "render_trade_chart", "ReportConfig",
     # data
-    "DataBus", "BarFeed", "DataSource", "OpentdxParquetSource", "default_data_dir",
+    "DataBus", "BarFeed", "MarketFeed", "DataSource", "OpentdxParquetSource", "default_data_dir",
     # execution
-    "MatchingEngine", "FillResult", "CancelResult", "OrderBook", "OrderGroup",
-    "Atomicity", "LinkMode",
+    "ExecutionBackend", "MatchingEngine", "FillResult", "CancelResult", "OrderBook",
+    "OrderGroup", "Atomicity", "LinkMode",
+    # live (Phase 6 · ① 实盘复用地基)
+    "LiveFeed", "LiveConnector", "Transport", "SimulatedTransport",
     # ledger
     "Ledger", "Position", "PositionLeg",
     # rules
@@ -102,4 +154,9 @@ __all__ = [
     "CostModel", "NoOpCost", "StandardCost",
     # guard
     "RiskMiddleware", "NoOpRisk", "StandardRisk", "IncrementalRisk",
+    # selection (§17) + rotation
+    "SymbolSelector", "SymbolBudgetPolicy",
+    "FixedUniverseSelector", "CrossSectionRankSelector", "TrendPresenceSelector",
+    "LiquiditySelector", "CompositeSelector", "KellyBudgetPolicy",
+    "RotationStrategy",
 ]

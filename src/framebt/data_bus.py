@@ -3,6 +3,10 @@
 核心：**所有数据访问必须附带引擎签发的 CausalToken**。引擎在返回前强制过滤
 ``timestamp <= token.issued_at`` 的记录；显式请求越界数据抛出 ``CausalityViolation``。
 
+写侧（I5）：引擎启动后 ``enable_write_guard(key)``，``record / set_now / reset`` 必须携带
+同一个私有 key；策略只拿到 bus，调用会抛 ``CausalityViolation``，无法改写历史或权威时间。
+未启用 guard 的离线用法（单测/研究脚本）行为不变。
+
 实现（按设计文档阶段递进）：
   - 单序列 ``get()``：按因子名索引的列存序列，支持 window/period 与 lag。
   - lag 原语（§4.3）：强制排除当前帧，窗口变为 ``[t-window, t-lag]``。
@@ -50,9 +54,34 @@ class DataBus:
         # 此时 token 自身权威（便于单测/离线分析）。有引擎时用于钳制被伪造的 token。
         self._now_ns: Optional[int] = None
         self.forgery_attempts: int = 0
+        # I5 写保护：引擎启动时用 enable_write_guard(key) 设置一个私有 key，
+        # 之后 record / set_now / reset 必须携带同一个 key（identity 比较）。
+        # 策略只拿到 bus，拿不到 key，因此无法改写历史或篡改权威时间。
+        # 未启用 guard 时（离线分析 / 单元测试）行为不变。
+        self._guard_key: Optional[object] = None
 
-    def set_now(self, ts: int) -> None:
-        """引擎每帧调用：登记权威当前虚拟时间（§4.1 token 不可伪造的强制点）。"""
+    def enable_write_guard(self, key: object) -> None:
+        """引擎调用：启用写保护。``key`` 由引擎私有持有，不传给策略。
+
+        已启用后不允许用新 key 替换（否则策略可先 ``enable_write_guard(new_key)``
+        再写历史）。重复用同一个 key 调用是幂等的。
+        """
+        if key is None:
+            raise ValueError("write guard key 不能为 None")
+        if self._guard_key is not None and key is not self._guard_key:
+            raise CausalityViolation("DataBus 写保护已启用，不能替换 guard key（I5）")
+        self._guard_key = key
+
+    def _check_write(self, key: Optional[object]) -> None:
+        if self._guard_key is not None and key is not self._guard_key:
+            raise CausalityViolation("DataBus 写操作仅限引擎持有者（I5：不可改写历史/权威时间）")
+
+    def set_now(self, ts: int, *, _key: Optional[object] = None) -> None:
+        """引擎每帧调用：登记权威当前虚拟时间（§4.1 token 不可伪造的强制点）。
+
+        启用写保护后必须携带引擎私有 key；策略调用会抛 ``CausalityViolation``。
+        """
+        self._check_write(_key)
         self._now_ns = int(ts)
 
     def _effective_ts(self, token: CausalToken) -> int:
@@ -70,11 +99,17 @@ class DataBus:
             return self._now_ns
         return token.issued_at_ns
 
-    def record(self, key: str, symbol: str, timestamp: int, value: float) -> None:
-        """引擎在 Phase 1 注入 Bar 时调用：把 OHLCV 写进列存。"""
+    def record(self, key: str, symbol: str, timestamp: int, value: float, *,
+               _key: Optional[object] = None) -> None:
+        """引擎在 Phase 1 注入 Bar 时调用：把 OHLCV 写进列存。
+
+        启用写保护后必须携带引擎私有 key；策略调用会抛 ``CausalityViolation``。
+        """
+        self._check_write(_key)
         self._series[(key, symbol)].append((int(timestamp), float(value)))
 
-    def reset(self) -> None:
+    def reset(self, *, _key: Optional[object] = None) -> None:
+        self._check_write(_key)
         self._series.clear()
         self.request_log.clear()
         self._now_ns = None
@@ -136,7 +171,11 @@ class DataBus:
         if not all_history and (window is not None or period is not None):
             n = window if window is not None else period
             if n is not None:
-                values = values[-n:]
+                # window=0 不得退化成「全量」：Python 的 values[-0:] 就是 values[0:]。
+                # 负数窗口没有定义，显式报错而不是返回一段无意义切片。
+                if n < 0:
+                    raise ValueError(f"window/period 不能为负：{n}")
+                values = values[-n:] if n > 0 else []
 
         return values
 
@@ -147,7 +186,14 @@ class DataBus:
         token: CausalToken,
         lag: int = 0,
     ) -> list[tuple[int, float]]:
-        """返回 ``(timestamp, value)`` 原始序列（用于自定义因子计算）。"""
+        """返回 ``(timestamp, value)`` 原始序列（用于自定义因子计算）。
+
+        ``lag`` 的因果语义与 :meth:`get` 完全一致：负 lag 等于显式请求未来数据，
+        必须与 ``get`` 一样抛 ``CausalityViolation``（否则 ``series`` 会成为
+        I1 的旁路；``cross_section`` 也走这里）。
+        """
+        if lag < 0:
+            raise CausalityViolation(f"lag={lag} 为负，等于显式请求未来数据（违反 I1）")
         allowed_ts = self._effective_ts(token) - int(lag)
         seq = self._series.get((key, symbol), [])
         return [(ts, v) for ts, v in seq if ts <= allowed_ts]

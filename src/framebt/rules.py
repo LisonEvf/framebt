@@ -48,6 +48,11 @@ class MarketRules(ABC):
     def settlement_cycle(self, asset: str) -> int:
         ...
 
+    @abstractmethod
+    def available_to_borrow(self, asset: str, frame: MarketFrame) -> float:
+        """可融券借出的最大数量（用于 SELL_SHORT 约束）。"""
+        ...
+
     def observe(self, frame: MarketFrame) -> None:  # 逐帧钩子（更新昨收等状态）
         pass
 
@@ -78,6 +83,25 @@ class MarketRules(ABC):
                 return reason
             if upper is not None and frame.open(symbol) > upper:
                 return f"{symbol} 涨停（开盘价 {frame.open(symbol):.2f} > 涨停价 {upper:.2f}）"
+            return None
+
+        if order.side is OrderSide.SELL_SHORT:
+            # ---- 融券做空（A 股约束）----
+            ok, reason = self.can_sell(symbol, frame)
+            if not ok:
+                return reason
+            # 涨停不可开空（开盘价触及涨停价）
+            if upper is not None and frame.open(symbol) > upper:
+                return (
+                    f"{symbol} 涨停（开盘价 {frame.open(symbol):.2f} > 涨停价 {upper:.2f}）不可开空"
+                )
+            # 可借数量约束：开空量不得超过可融券数量
+            if order.size > 0:
+                borrowable = self.available_to_borrow(symbol, frame)
+                if borrowable < float("inf") and order.size > borrowable + 1e-9:
+                    return (
+                        f"{symbol} 可借 {borrowable:.0f} 股 < 开空 {order.size:.0f} 股"
+                    )
             return None
 
         else:  # SELL
@@ -120,6 +144,9 @@ class NoOpRules(MarketRules):
 
     def settlement_cycle(self, asset) -> int:
         return self._settlement_cycle
+
+    def available_to_borrow(self, asset, frame) -> float:
+        return float("inf")
 
 
 class StandardAshareRules(MarketRules):
@@ -170,10 +197,29 @@ class StandardAshareRules(MarketRules):
         return False
 
     def is_tradable(self, asset, frame) -> bool:
-        if self._trading_days is not None and frame.end_ns not in self._trading_days:
-            if not frame.is_trading:
-                return False
-        return True
+        """交易日历检查。
+
+        ``trading_days`` 传逻辑时间戳集合。引擎的 ``frame.end_ns`` 是
+        ``bar.timestamp + delta_t``（日线下即「bar 时间戳 + 1」），因此同时匹配
+        ``end_ns`` 与 ``end_ns - 1``，两种传法都能用。未提供 ``trading_days``
+        时不做限制（与旧行为一致）。
+        """
+        if self._trading_days is None:
+            return True
+        return (frame.end_ns in self._trading_days
+                or (frame.end_ns - 1) in self._trading_days)
 
     def settlement_cycle(self, asset) -> int:
         return self.settlement_cycle_val
+
+    def available_to_borrow(self, asset, frame) -> float:
+        """可融券借出量：以行情流通股本 ``float_shares`` 为上限代理。
+
+        数据源在 Bar 上提供 ``float_shares``（流通股本）时返回之；缺失时返回
+        ``inf``（不约束，避免无数据时误拒开空）。
+        """
+        if frame.has_bar(asset):
+            fs = frame.bars[asset].float_shares
+            if fs and fs > 0:
+                return fs
+        return float("inf")

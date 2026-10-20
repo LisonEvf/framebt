@@ -7,6 +7,7 @@
   - stamp_tax：印花税（仅卖出，A 股 0.1%）
   - transfer_fee：过户费
   - slippage：滑点模型（fixed / proportional / volume_based / sqrt）
+  - borrow_fee：融券费率（仅开空计收，按空头名义市值 / 日）
 
 可插拔：实现 ``CostModel.cost_for(fill, frame) -> float`` 即可。
 """
@@ -57,6 +58,7 @@ class StandardCost(CostModel):
         spread: float = 0.0,
         impact: float = 0.1,
         adv: float | None = None,
+        borrow_fee: float = 0.0,
     ):
         self.commission = commission
         self.min_commission = min_commission
@@ -67,6 +69,7 @@ class StandardCost(CostModel):
         self.spread = spread
         self.impact = impact
         self.adv = adv
+        self.borrow_fee = borrow_fee  # 融券费率（仅开空计收，按空头名义市值 / 日）
 
     def cost_for(self, fill: FillEvent, frame: MarketFrame) -> float:
         notional = fill.size * fill.price
@@ -83,6 +86,10 @@ class StandardCost(CostModel):
         # 过户费
         if self.transfer_fee > 0:
             fee += notional * self.transfer_fee
+
+        # 融券费（仅开空计收：按空头名义市值 / 日）
+        if fill.side is OrderSide.SELL_SHORT and self.borrow_fee > 0:
+            fee += notional * self.borrow_fee
 
         # 滑点
         fee += self._slippage_cost(fill, frame)
