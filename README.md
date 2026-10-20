@@ -7,7 +7,7 @@
 [![Tests](https://img.shields.io/badge/tests-422%20passed%20%2B%207%20xfailed-brightgreen.svg)](tests/test_capability_gate.py)
 [![Core deps](https://img.shields.io/badge/core%20deps-0-brightgreen.svg)](pyproject.toml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/LisonEvf/framebt/issues)
-[![GitHub stars](https://img.shields.io/github/stars/LisonEvf/framebt?style=social)](https://github.com/LisonEvf/framebt)
+[![Last commit](https://img.shields.io/github/last-commit/LisonEvf/framebt)](https://github.com/LisonEvf/framebt/commits/master)
 
 > 回测里最贵的 bug，不是模型不够复杂，而是**用今天收盘的信号，在今天开盘成交**。
 >
