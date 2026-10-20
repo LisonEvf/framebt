@@ -12,9 +12,10 @@
 >
 > 本文是**技术使用手册**，不是概念介绍。目标：把「底仓 + 日内 T」这套策略从**信号因子计算 → 开仓 → 平仓 → 成本 → 仓位 → 择时 → P&L 聚合 → 因果性**每一层讲清楚，并给出带注释的实现代码。
 >
-> 配套源码：`tools/sweep_intraday_bt.py`（旧实现，含上述缺陷）、`tools/sweep_intraday_v2.py`（修正版）、
-> `sweep_monitor/sweep_monitor/engine/detection.py`（信号识别）。
-> 配套结果：[`reports/INTRADAY_SWEEP.md`](../reports/INTRADAY_SWEEP.md)（现行；v1 已作废并删除）。
+> 配套源码：`tools/sweep_intraday_v2.py`（修正版；需要外部 `sweep_monitor`，
+> 用 `SWEEP_MONITOR_DIR` 指定路径）、`sweep_monitor/sweep_monitor/engine/detection.py`（信号识别）。
+> 旧 v1 `sweep_intraday_bt.py` 因逐笔页序/门控缺陷已从仓库移除（git 历史可查）。
+> 配套结果：[`reports/INTRADAY_SWEEP.md`](../reports/INTRADAY_SWEEP.md)（现行）。
 
 ---
 
@@ -346,7 +347,7 @@ hit  = float(np.mean(r[r != 0] > 0))                         # 胜率
 
 ## 10. 在 framebt 引擎里重写这个策略
 
-`sweep_intraday_bt.py` 是**独立脚本**（直接用 `QuoteSource` 拉逐笔、自己循环）。若要在 **framebt 引擎**里表达同一套逻辑，核心是把它**映射到 `on_frame` 回调**。
+`sweep_intraday_v2.py` 是**独立脚本**（直接用 `QuoteSource` 拉逐笔、自己循环）。若要在 **framebt 引擎**里表达同一套逻辑，核心是把它**映射到 `on_frame` 回调**。
 
 > **粒度差异（重要）**：框架的 `bus.get(key, symbol, window=token=token)` 返回的是 **`list[float]` 标量因子序列**（如 `close`、`volume`），而扫单信号需要**带方向的逐笔成交**（`.direction/.vol/.amount`）。`Bar` 没有 `.direction`——逐笔在框架里属于 `Tick` 事件（高频 / 帧内事件队列，Phase 6）。因此把本策略搬进引擎，需先**把逐笔按自定义 key 注册进总线**（或喂 `Tick` 唤醒），再在回调里对窗口内逐笔跑 `detect_sweeps`。下面用注释标出这一步。
 
@@ -412,7 +413,7 @@ class SweepIntradayT(FrameStrategy):
 
 ### 10.2 映射关系
 
-| sweep_intraday_bt.py | framebt 引擎 |
+| sweep_intraday_v2.py | framebt 引擎 |
 |---|---|
 | `for tk in ticks` 循环 | `on_frame` 逐帧唤醒 |
 | `deque(maxlen=20)` 滚动窗口 | `bus.get(..., window=20, token=token)` 因果数据 |
@@ -462,10 +463,8 @@ class SweepIntradayT(FrameStrategy):
 
 ```bash
 cd framebt
-# 旧实现（含逐笔顺序缺陷，仅供对照，不要引用其收益）
-python tools/sweep_intraday_bt.py
-
 # 修正版：先建逐笔缓存（约 4 分钟），再跑全部变体
+# 需要外部 sweep_monitor：set SWEEP_MONITOR_DIR=...  （旧 v1 已移除，git 历史可查）
 python tools/sweep_intraday_v2.py --phase fetch
 python tools/sweep_intraday_v2.py --phase run
 # 输出：底仓 +2.09% / 底仓+分时T −2.12%；倒T 1550 笔 净−21,563元 正T 1440 笔 净−20,592元

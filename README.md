@@ -377,6 +377,7 @@ framebt/
 │   ├── discovery/            # 自主发现：符号回归 / 神经网络 / 入栈流水线
 │   └── strategies/           # 自适应多因子 / 双均线 / 横截面动量 / 轮动 / ETF 趋势 / 条件单 / Bracket
 ├── tools/
+│   ├── README.md             # 工具索引：验证/门禁、数据回填、研究脚本与外部依赖
 │   ├── backfill_history.py   # 分页回填 opentdx 数仓历史（复用其 persist 写库）
 │   ├── validate_framework.py # 框架能力验证（输出 reports/VALIDATION.md）
 │   ├── validate_capability.py# 端到端验证：低波动组合逐笔对账（reports/CAPABILITY.md）

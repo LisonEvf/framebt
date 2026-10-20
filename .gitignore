@@ -25,5 +25,7 @@ results/
 tools/*_cache/
 tools/report/
 tools/*.log
+tools/etf_universe.json
+tools/etf_candidates.json
 reports/*.html
 reports/*_RUN.txt

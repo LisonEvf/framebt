@@ -4,7 +4,7 @@
 
 ## 一、为什么要重跑
 
-v1（`tools/sweep_intraday_bt.py`，旧报告 `sweep_intraday.md`：**倒T 1666 笔 / 72% 胜率 /
+v1（`sweep_intraday_bt.py`，已从仓库移除、git 历史可查；旧报告 `sweep_intraday.md`：**倒T 1666 笔 / 72% 胜率 /
 +3.09pp / Sharpe 0.81**）存在三处会推翻结论的缺陷：
 
 | # | 缺陷 | 实测证据 | 影响 |

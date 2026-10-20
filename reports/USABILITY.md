@@ -1,6 +1,6 @@
 # framebt「真实可用」门禁报告
 
-> 生成：2026-10-20 23:22:38 ｜ 用时 9.0s ｜ 预登记：[`docs/GATE_USABILITY.md`](../docs/GATE_USABILITY.md)
+> 生成：2026-10-20 23:57:55 ｜ 用时 8.8s ｜ 预登记：[`docs/GATE_USABILITY.md`](../docs/GATE_USABILITY.md)
 
 ## 0. 结论
 
@@ -16,8 +16,8 @@
 |---|---|---|---|
 | G6a 纯标准库 import + 微型回测 | python -S 下 exit 0 | **PASS** | OK 1.0.0 1 1000.0 |
 | G1-G5 pytest 门禁（金标准/oracle/因果/元形/不变量） | exit 0，除 7 条 strict xfail 外 0 failed | **PASS** | exit=0 |
-| G6b GBK 控制台下 validate_capability.py --quick | exit 0 且写出报告 | **PASS** | exit=0；报告 16297B；用时 5.5s（GBK 控制台未崩） |
-| G6c 3,000 帧吞吐 | > 2,000 bars/s 且 < 10s | **PASS** | 5,859 bars/s |
+| G6b GBK 控制台下 validate_capability.py --quick | exit 0 且写出报告 | **PASS** | exit=0；报告 16297B；用时 5.3s（GBK 控制台未崩） |
+| G6c 3,000 帧吞吐 | > 2,000 bars/s 且 < 10s | **PASS** | 6,313 bars/s |
 | G7a 真实数据体检（5 标的 × ≤400 根） | NaN/非正价/OHLC 矛盾/异常日收益/重复时间戳 均为 0 | **PASS** | SH.600519:0；SZ.000001:0；SH.601318:0；SH.601899:0；SH.600036:0（合计 0） |
 | G7b 真实单标的端到端重放（SH.600519，400 根） | 逐帧权益 + 逐笔成本 1e-9 一致 | **PASS** | 2 笔成交；期末 92,858.20；收益 -7.14%；回撤 18.91%；现金偏差 +0.000e+00 |
 | G7c 真实多标的端到端重放（5 标的 × 250 帧） | 逐帧权益 + 逐笔成本 1e-9 一致 | **PASS** | 5 笔成交；期末 999,099.79；收益 -0.09%；回撤 2.50%；现金偏差 +0.000e+00 |
@@ -27,7 +27,7 @@
 
 - Python：3.12.10
 - 平台：nt / win32
-- 数据源：`C:\Users\Lison\Desktop\EvfWorkSpace\TRADE\opentdx\db\data`
+- 数据源：`opentdx 数仓（默认 ../opentdx/db/data，可用 FRAMEBT_DATA_DIR 覆盖）`
 - 标的：SH.600519, SZ.000001, SH.601318, SH.601899, SH.600036
 - 命令：`python -u tools/gate_runner.py --md reports/USABILITY.md`；变异 `python -u tools/mutate_gate.py --md reports/MUTATION.md`
 

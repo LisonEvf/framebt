@@ -387,7 +387,7 @@ def main() -> int:
     env_lines = [
         f"- Python：{sys.version.split()[0]}",
         f"- 平台：{os.name} / {sys.platform}",
-        f"- 数据源：`{src.data_dir}`",
+        "- 数据源：`opentdx 数仓（默认 ../opentdx/db/data，可用 FRAMEBT_DATA_DIR 覆盖）`",
         f"- 标的：{', '.join(symbols)}",
         f"- 命令：`python -u tools/gate_runner.py --md {path.as_posix()}`；"
         f"变异 `python -u tools/mutate_gate.py --md reports/MUTATION.md`",

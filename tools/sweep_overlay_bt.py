@@ -18,11 +18,14 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 
-FRAMEBT = r"C:\Users\Lison\Desktop\EvfWorkSpace\TRADE\framebt"
-SWEEP = r"C:\Users\Lison\Desktop\EvfWorkSpace\TRADE\sweep_monitor"
+_ROOT = Path(__file__).resolve()
+FRAMEBT = str(_ROOT.parents[1])
+# 外部依赖 sweep_monitor 不随本仓库发布；用环境变量指定其路径。
+SWEEP = os.environ.get("SWEEP_MONITOR_DIR") or str(_ROOT.parents[2] / "sweep_monitor")
 for p in (FRAMEBT, SWEEP):
     if p not in sys.path:
         sys.path.insert(0, p)

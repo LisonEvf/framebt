@@ -77,7 +77,7 @@ def to_bars(feed) -> list[dict]:
 # ---------------------------------------------------------------------------
 def check_data(src: OpentdxParquetSource, syms: list[str]) -> None:
     hr("1. 数据接入完整性")
-    out(f"数据源      : {src.data_dir}")
+    out(f"数据源      : opentdx 数仓（默认 ../opentdx/db/data，可用 FRAMEBT_DATA_DIR 覆盖）")
     out(f"标的数      : {len(syms)}")
     out(f"口径        : period={src.period} (DAILY)  adjust={src.adjust} (QFQ)")
 

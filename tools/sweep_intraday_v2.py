@@ -44,7 +44,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-SWEEP = r"C:\Users\Lison\Desktop\EvfWorkSpace\TRADE\sweep_monitor"
+ROOT = Path(__file__).resolve().parent
+# 外部依赖 sweep_monitor 不随本仓库发布；用环境变量指定其路径。
+# 默认按兄弟目录 ../sweep_monitor 查找，避免把本机绝对路径写进仓库。
+SWEEP = os.environ.get("SWEEP_MONITOR_DIR") or str(ROOT.parents[1] / "sweep_monitor")
 if SWEEP not in sys.path:
     sys.path.insert(0, SWEEP)
 
@@ -54,7 +57,6 @@ from sweep_monitor.engine.detection import detect_sweeps  # noqa: E402
 
 from opentdx.const import ADJUST, MARKET, PERIOD  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent
 TICK_DIR = ROOT / "tick_cache"
 OUT_DIR = ROOT / "report"
 TICK_DIR.mkdir(exist_ok=True)

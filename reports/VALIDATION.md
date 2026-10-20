@@ -14,7 +14,7 @@ framebt 框架能力验证报告
 ========================================================================
   1. 数据接入完整性
 ========================================================================
-数据源      : C:\Users\Lison\Desktop\EvfWorkSpace\TRADE\opentdx\db\data
+数据源      : opentdx 数仓（默认 ../opentdx/db/data，可用 FRAMEBT_DATA_DIR 覆盖）
 标的数      : 5575
 口径        : period=4 (DAILY)  adjust=1 (QFQ)
 bar 数      : min=1  max=6000  合计=15577265
