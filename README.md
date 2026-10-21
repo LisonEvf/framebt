@@ -228,6 +228,7 @@ Ledger + Rules + Cost ──► BacktestResult (fills, equity, performance)
 | [`bracket_oco.py`](examples/bracket_oco.py) | 入场 + OCO 止盈/止损 |
 | [`rotation_momentum.py`](examples/rotation_momentum.py) | 轮动 + 选股器/预算策略 |
 | [`rotation_trend_ma.py`](examples/rotation_trend_ma.py) | 轮动 + 趋势过滤 |
+| [`risk_budget_etf.py`](examples/risk_budget_etf.py) | 风险预算多资产 ETF（类别等权 + 波动目标，见 [`docs/RISK_BUDGET.md`](docs/RISK_BUDGET.md)） |
 
 ```bash
 python examples/demo_quickstart.py
