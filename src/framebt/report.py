@@ -713,7 +713,7 @@ def generate_report(
 
     # 交易 K 线图：按成交数量取前 max_trade_charts 只标的
     trade_imgs: dict[str, str] = {}
-    if bars_by_symbol:
+    if bars_by_symbol is not None:
         # 补齐缺标的的 bars（按需从 source 加载）
         symbols = sorted({f.symbol for f in result.fills})
         for s in symbols:

@@ -23,6 +23,8 @@ results/
 
 # framebt tool caches / logs / generated artifacts（生成物，不入库）
 tools/*_cache/
+tools/*/cache/
+tools/*/*.html
 tools/report/
 tools/*.log
 tools/etf_universe.json

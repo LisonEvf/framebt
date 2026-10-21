@@ -15,6 +15,7 @@
 | 文件 | 内容 | 状态 |
 |---|---|---|
 | [`MULTIFACTOR.md`](MULTIFACTOR.md) | 自适应多因子系统落地说明与实现边界 | 当前 |
+| [`RISK_BUDGET.md`](RISK_BUDGET.md) | 风险预算多资产 ETF：策略设计 + 原型（样本内，**非** OOS） | 设计 + 原型 |
 | [`ETF_TREND.md`](ETF_TREND.md) | 多资产 ETF 趋势跟踪预登记 + 结果（主策略未达标，等权多资产可用） | 当前 |
 | [`PATH_200K.md`](PATH_200K.md) | 20 万本金路径的方法论批判（24 股时代数字已作废，批判仍成立） | 当前（顶部有声明） |
 | [`PHASE6.md`](PHASE6.md) | 帧内执行 / 实盘 / 做空 / 双时钟域设计快照 | 设计快照（数字可能过期） |
@@ -38,6 +39,18 @@
 | [`EXTERNAL_REPLICATION.md`](../reports/EXTERNAL_REPLICATION.md) | 公开策略复刻的三层对账（独立实现 / Yahoo / 公开结果） |
 | [`INTRADAY_SWEEP.md`](../reports/INTRADAY_SWEEP.md) | 扫单分时 T 修正版（负结果） |
 
+## 经典案例
+
+把「框架正确用法」串成一个完整策略的样板（**教学用**，非 alpha 证明）：
+
+| 案例 | 回答的问题 | 入口 |
+|---|---|---|
+| [`../tools/multifactor_sweep/`](../tools/multifactor_sweep/README.md) | 多因子基础 + Sweep 做 T + 主动选股：从数据准备到带 K 线图的报告，含两个「口径自欺」陷阱 | `tools/multifactor_sweep/README.md` |
+
+> 定位：案例的价值在**正确用法**（无前视、口径一致、可复现），不在 alpha。
+> 同框架自适应多因子系统样本外为 −78%（`reports/ADAPTIVE.md`），两相对照说明
+> **框架正确 ≠ 策略赚钱**。
+
 ## 历史归档
 
 | 文件 | 说明 |
@@ -52,7 +65,9 @@
 1. 新用户：`README.md` → `USER_GUIDE.md` → `examples/demo_quickstart.py`；
 2. 想评估可信度：`reports/CAPABILITY.md` → `reports/USABILITY.md` → `reports/MUTATION.md`；
 3. 想复刻外部策略：`docs/REPLICATION.md` → `reports/EXTERNAL_REPLICATION.md`；
-4. 想知道坑在哪：README「Known boundaries」→ `reports/USABILITY.md` §5 → `docs/archive/REMEDIATION.md` §4。
+4. 想完整跑通一个多因子 + 做 T 策略（含 K 线图报告）：
+   `tools/multifactor_sweep/README.md`；
+5. 想知道坑在哪：README「Known boundaries」→ `reports/USABILITY.md` §5 → `docs/archive/REMEDIATION.md` §4。
 
 ## 维护约定
 

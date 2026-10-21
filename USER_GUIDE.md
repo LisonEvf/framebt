@@ -219,7 +219,8 @@ res = run_backtest(
     initial_cash=100_000.0,
 )
 
-# bars_by_symbol 用于画交易 K 线图；缺省时报告自动跳过该图。
+# bars_by_symbol 用于画交易 K 线图；缺省时（传空字典或不传）报告自动跳过该图。
+# 多标的 / 横截面策略：传 bars_by_symbol={} + source=，按成交标的从数仓按需加载 K 线。
 html = generate_report(
     res,
     bars_by_symbol={symbol: bars},
@@ -227,6 +228,17 @@ html = generate_report(
     output_path="reports/dual_ma.html",   # 可选：直接落盘
 )
 # html 是自包含字符串，也可自行写入其它位置。
+```
+
+> ⚠️ **K 线图会静默缺失**：`generate_report` 靠「传入了 `bars_by_symbol`」来判断是否画
+> 交易 K 线图。若只传 `source=` 而不传 `bars_by_symbol`，或传空字典 `bars_by_symbol={}` 却
+> **不传 `source=`**，K 线图会被**静默跳过**——报告里只有权益曲线，没有「交易 K 线」章节。
+> 正确姿势：`bars_by_symbol={}`（空字典）+ `source=OpentdxParquetSource()`，让引擎按成交
+> 标的从数仓按需加载；或用 `config=ReportConfig(max_trade_charts=15)` 控制渲染多少只标的。
+
+> **自检**：打开报告，确认「交易 K 线」章节每只标的都有蜡烛 + 「买 / 卖」标注；没有就是被
+> 静默跳过了。多标的 / 横截面策略的经典案例见
+> [`tools/multifactor_sweep/README.md`](tools/multifactor_sweep/README.md)（含 15 张 K 线图）。
 ```
 
 `generate_report` 签名：
@@ -242,6 +254,11 @@ generate_report(
     config=ReportConfig(),        # benchmark=True / max_trade_charts=8 / period_frames=244 …
 ) -> str                         # 返回自包含 HTML
 ```
+
+> 📖 **经典案例**：想把上面这些串成一个完整的多因子 + 做 T 策略？看
+> [`tools/multifactor_sweep/README.md`](tools/multifactor_sweep/README.md)——它用一套真实跑通、
+> 带 15 张 K 线图的报告，讲解「数据准备 → 引擎装配 → 主动选股/空仓 → Sweep 做 T → 权重优化 →
+> 生成报告」的完整正确姿势，并记录了两个「结果看起来对、口径却错了」的真实陷阱。
 
 ---
 

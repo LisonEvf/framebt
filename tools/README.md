@@ -31,6 +31,7 @@
 | `run_step1_investable.py` / `bench_oos_200k.py` | 20 万路径 / 样本外基准研究 |
 | `ab_test_strategies.py` | 多标的策略 A/B |
 | `sweep_intraday_v2.py` / `sweep_overlay_bt.py` | 扫单分时 T / fade 叠加；需要外部 `sweep_monitor`，用 `SWEEP_MONITOR_DIR` 指定路径 |
+| `multifactor_sweep/run.py` | **经典案例**：多因子基础 + Sweep 做 T + 主动选股，端到端回测 + 带 K 线图的报告；见 `multifactor_sweep/README.md` |
 | `gen_report.py` | 报告生成辅助 |
 
 ## 约定
