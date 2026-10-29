@@ -123,6 +123,8 @@ class Engine:
         self._n = len(self._bars)
 
         self.result = BacktestResult(start_ns=start_ns)
+        # 记录初始资金：total_return 需要以它为基准（否则会漏掉首帧盈亏）。
+        self.result.initial_cash = float(initial_cash) if initial_cash > 0 else None
 
     # ---- Phase 1：数据注入 ----
 

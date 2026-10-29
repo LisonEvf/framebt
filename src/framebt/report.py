@@ -739,8 +739,12 @@ def generate_report(
     perf_dict = {
         "total_return": perf.total_return,
         "annualized_return": perf.annualized_return,
+        "volatility": perf.volatility,
         "sharpe": perf.sharpe,
+        "sharpe_cagr": perf.sharpe_cagr,
+        "sortino": perf.sortino,
         "max_drawdown": perf.max_drawdown,
+        "calmar": perf.calmar,
         "win_rate": perf.win_rate(),
     }
 

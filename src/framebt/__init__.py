@@ -20,7 +20,7 @@
     from framebt.strategies import DualMAStrategy
 
     feed = OpentdxParquetSource().load("SH.600519")
-    result = Engine(feed, DualMAStrategy(short=5, long=20)).run()
+    result = Engine(feed, DualMAStrategy("SH.600519", short=5, long=20)).run()
     print(result.equity_curve)
 """
 
@@ -115,6 +115,24 @@ from .cost import CostModel, NoOpCost, StandardCost
 # ---- 风控中间件（§9）----
 from .guard import RiskMiddleware, NoOpRisk, StandardRisk, IncrementalRisk
 
+# ---- 绩效指标（统一口径，见 framebt.metrics）----
+from . import metrics
+from .metrics import (
+    DEFAULT_PERIODS_PER_YEAR,
+    MetricConfig,
+    annualized_volatility,
+    cagr,
+    calmar_ratio,
+    max_drawdown,
+    sharpe_ratio,
+    sortino_ratio,
+    summarize,
+    total_return,
+)
+
+# ---- 目标权重调仓原语 ----
+from .rebalance import RebalanceConfig, rebalance_orders, target_shares, weights_from_positions
+
 # ---- 选股 + 资金抽象（§17）----
 from .selection import (
     SymbolSelector,
@@ -154,6 +172,12 @@ __all__ = [
     "CostModel", "NoOpCost", "StandardCost",
     # guard
     "RiskMiddleware", "NoOpRisk", "StandardRisk", "IncrementalRisk",
+    # metrics（统一口径）
+    "metrics", "MetricConfig", "DEFAULT_PERIODS_PER_YEAR",
+    "total_return", "cagr", "annualized_volatility", "sharpe_ratio",
+    "sortino_ratio", "max_drawdown", "calmar_ratio", "summarize",
+    # rebalance（目标权重调仓原语）
+    "RebalanceConfig", "rebalance_orders", "target_shares", "weights_from_positions",
     # selection (§17) + rotation
     "SymbolSelector", "SymbolBudgetPolicy",
     "FixedUniverseSelector", "CrossSectionRankSelector", "TrendPresenceSelector",

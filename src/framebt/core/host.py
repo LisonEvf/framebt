@@ -64,6 +64,23 @@ class StrategyHost:
         """是否有未落地的订单（策略用它避免重复下单）。"""
         return bool(self.pending_orders(symbol))
 
+    # ---- 目标权重调仓（便捷入口）----
+
+    def rebalance_to(self, targets, frame, *, prices=None, config=None):
+        """把目标权重翻译成订单（先卖后买，整手，现金约束）。
+
+        等价于 ``framebt.rebalance.rebalance_orders(targets, frame, self, ...)``；
+        详见 :mod:`framebt.rebalance`。典型用法：
+
+            def on_frame(self, frame, token, bus, host):
+                return host.rebalance_to({"SH.510300": 0.6, "SH.511010": 0.4}, frame)
+
+        注意：权重和 ≤ 1；未列出的持仓会被清掉；决策用本帧收盘，成交在下一帧开盘（I2）。
+        """
+        from ..rebalance import rebalance_orders
+
+        return rebalance_orders(targets, frame, self, prices=prices, config=config)
+
     def register(self, strategy, wakeups: Optional[list[WakeupType]] = None) -> None:
         """注册策略及其关心的唤醒类型（§10.1）。
 

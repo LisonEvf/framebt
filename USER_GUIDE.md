@@ -338,6 +338,8 @@ def on_fill(self, fill):
 `if host.pending_orders(): return []`（等上一帧全部落地）。
 
 > ⚠️ 默认 `risk=NoOpRisk()` 不拦超买：重复下单会让现金变负（隐含杠杆）。严肃回测请传 `StandardRisk(...)`。
+> ⚠️ 注意 `StandardRisk` 目前用**当帧收盘**给持仓估值，在「开盘成交」口径下会放行
+> 按开盘价已超限的订单；修复前不建议用它做严格的仓位约束。
 
 确定性 RNG 由宿主注入（`host.rng`），策略**禁止**使用 `random` / `numpy.random`，否则破坏 I3。
 
@@ -364,6 +366,46 @@ Sharpe −0.10，最大回撤 97.39%，费用 267.53% 初始资金（详见 `rep
 > ⚠️ **旧 24 股结果（+42.47% / 超额 +25.76%）已作废**：该数据池已被全市场迁移替代，
 > 当前代码无法复现。当前负收益是策略层失败（换手 27.9×、费用失控），不是正 alpha 证据；
 > 也不能反过来证明「框架错误」。验证池仍是存活标的（存活偏差），结论不可外推。
+
+### 5.7 目标权重调仓（`rebalance.py`）
+
+按目标权重调仓不用再手写「算权益 → 目标股数 → 先卖后买 → 整手 → 现金约束」：
+
+```python
+from framebt import RebalanceConfig
+
+def on_frame(self, frame, token, bus, host):
+    if not is_month_start(frame):        # 调度仍需策略自己判断
+        return []
+    targets = {"SH.510300": 0.6, "SH.511010": 0.4}   # 权重和 ≤ 1
+    return host.rebalance_to(targets, frame)
+```
+
+约定：
+- 决策价 = 本帧收盘，订单在**下一帧开盘**成交（I2）；未列出的持仓目标为 0（会被清掉）；
+- 100 股整手；`min_trade_pct` 过滤碎单；`cash_buffer` 预留费用/跳空；卖出所得同日可用于买入；
+- 权重和 > 1、负权重、NaN 会抛 `ValueError`；持仓在本帧无行情且未传 `prices=` 也会抛错；
+- 需要复刻历史逐笔口径时用 `RebalanceConfig(cash_buffer=0, min_trade_pct=0, enforce_cash=False)`。
+- 详见 [`docs/REBALANCE.md`](docs/REBALANCE.md)。
+
+### 5.8 绩效指标口径（`metrics.py`）
+
+所有指标（`Performance` / HTML 报告 / 工具）都走 [`framebt.metrics`](src/framebt/metrics.py)：
+
+| 指标 | 定义 |
+|---|---|
+| 总收益 | `final / initial_cash - 1`（含首帧盈亏） |
+| 年化 CAGR | `(final / initial)^(periods_per_year / n_periods) - 1` |
+| 波动 | 简单收益样本标准差 × `√periods_per_year` |
+| Sharpe | `mean(r) / std(r) × √periods_per_year`（标准定义） |
+| Sortino | 分母改为下行偏差 |
+| 最大回撤 | 正数（0.25 = 25%） |
+| Calmar | `CAGR / 最大回撤` |
+
+`periods_per_year` 默认 **244**（A 股日线；美股可传 252），CAGR/波动/Sharpe 共用它。
+**2026-10-29 起 `Performance.sharpe` 由旧口径 `CAGR/vol` 改为标准 Sharpe**；旧口径保留为
+`Performance.sharpe_cagr`，此前生成的报告里的 Sharpe 不可与新报告直接比较。
+详见 [`docs/METRICS.md`](docs/METRICS.md)。
 
 ---
 

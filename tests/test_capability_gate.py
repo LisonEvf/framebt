@@ -384,7 +384,10 @@ def test_g1_performance_metrics_known_answer():
     assert p.annualized_return == pytest.approx(0.2, abs=EPS)
     assert p.max_drawdown == pytest.approx(0.1, abs=EPS)
     assert p.volatility == pytest.approx(0.27386, rel=1e-4)
-    assert p.sharpe == pytest.approx(0.20 / 0.27386, rel=1e-4)
+    # 2026-10-29 起 Sharpe 统一为标准定义 mean/std×√ppy；旧口径保留为 sharpe_cagr。
+    assert p.sharpe == pytest.approx(0.77458, rel=1e-4)
+    assert p.sharpe_cagr == pytest.approx(0.20 / 0.27386, rel=1e-4)
+    assert p.calmar == pytest.approx(2.0, rel=1e-9)
     assert p.win_rate() == pytest.approx(1.0)
 
     loss = BacktestResult(fills=[
